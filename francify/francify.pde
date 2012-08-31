@@ -3,7 +3,7 @@ void setup() {
   String [] lines = loadStrings("data/tour_de_france_data.csv");
   for (String line : lines) {
       String[] pieces = split(line, ',');
-      System.println(pieces[0])
+      print(pieces[0] + " " + pieces[1] + " " + pieces[2]);
   }
 }
 
