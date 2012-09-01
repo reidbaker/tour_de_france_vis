@@ -16,6 +16,7 @@ public class Francify extends PApplet {
 		frameRate(30);
 		
 		s = new Slider(50, 500, 700, 50);
+		s.setValues(new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12});
 		unpressed = true;
 		movingSlider = false;
 		leftHandle = false;
@@ -105,7 +106,10 @@ public class Francify extends PApplet {
 			
 			// Draw underlying data
 			fill(0,0,0);
-			rect(x+20, y+h/2-20, 100, 40);
+			for(int i = 0; i < values.length; i++){
+				int xpos = x + (i) * w / (values.length) + w / (2*values.length);
+				ellipse(xpos,y+h/2,10,10);
+			}
 
 			// Draw main bar
 			fill(0, 0, 0, 0);
