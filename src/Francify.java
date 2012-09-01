@@ -28,10 +28,14 @@ public class Francify extends PApplet {
 	public void draw() {
 		// Handle data drawing
 
-		background(0xd9cccc);
+		background(0xcccccc);
 		drawAxes();
 		s.drawSlider();
-
+		handleInput();
+		updateAnim();
+	}
+	
+	public void handleInput(){
 		// Handle user input
 		if (mousePressed == true) {
 			if (unpressed) {
@@ -55,8 +59,14 @@ public class Francify extends PApplet {
 				} else if(rightHandle){
 					s.dragRH(mouseX, pmouseX);
 				}
+				s.snapGoals();
 			}
 		}
+	}
+	
+	public void updateAnim(){
+		// Update animation values (simple spring animation)
+		s.updateAnim(4);
 	}
 
 	public void mouseReleased() {
@@ -76,13 +86,16 @@ public class Francify extends PApplet {
 		// Draw Labels
 	}
 
-	public void drawData() {
-		// Set colors and draw lines. Use a thicker stroke is possible
+	public void drawData(float minBound, float maxBound) {
+		// Set colors and draw lines. Use a thicker stroke if possible
+		
 	}
 
 	private class Slider {
 		int x, y, w, h;
 		int left, right;
+		int goalLeft, goalRight;
+		int snappedLeft, snappedRight;
 
 		int[] values;
 
@@ -95,6 +108,10 @@ public class Francify extends PApplet {
 			this.w = w;
 			this.h = h;
 			this.right = w + x;
+			goalLeft = left;
+			goalRight = right;
+			snappedLeft = goalLeft;
+			snappedRight = goalRight;
 		}
 
 		public void setValues(int[] values) {
@@ -159,37 +176,65 @@ public class Francify extends PApplet {
 		}
 		
 		public void dragAll(int nx, int px){
-			left += nx-px;
-			right += nx-px;
-			if(left < x){
-				right += x-left;
-				left += x-left;
+			goalLeft += nx-px;
+			goalRight += nx-px;
+			if(goalLeft < x){
+				goalRight += x-goalLeft;
+				goalLeft += x-goalLeft;
 			}
-			if(right > x + w){
-				left -= (right-(x+w));
-				right -= (right-(x+w));
+			if(goalRight > x + w){
+				goalLeft -= (goalRight-(x+w));
+				goalRight -= (goalRight-(x+w));
 			}
-			//TODO: bounds checking
 		}
 		
 		public void dragLH(int nx, int px){
-			left += nx-px;
-			if(left < x){
-				left += x-left;
-			} else if(left > right){
-				left = right;
+			goalLeft += nx-px;
+			if(goalLeft < x){
+				goalLeft += x-goalLeft;
+			} else if(goalLeft > goalRight - w/values.length){
+				goalLeft = goalRight - w/values.length;
 			}
-			//TODO: bounds checking
 		}
 		
 		public void dragRH(int nx, int px){
-			right += nx-px;
-			if(right > x+w){
-				right -= (right-(x+w));
-			} else if(left > right){
-				right = left;
+			goalRight += nx-px;
+			if(goalRight > x+w){
+				goalRight -= (goalRight-(x+w));
+			} else if(goalLeft > goalRight - w/values.length){
+				goalRight = goalLeft + w/values.length;
 			}
-			//TODO: bounds checking
+		}
+		
+		public void snapGoals(){
+			//TODO: Figure this out.  How to snap to only valid locations around data points.
+		}
+		
+		public float getLeftBound(){
+			//TODO: fix after adding data snap points
+			return left;
+		}
+		
+		public float getRightBound(){
+			//TODO: fix after adding data snap points
+			return right;
+		}
+		
+		public void updateAnim(int slowness){
+			snappedLeft = goalLeft;
+			snappedRight = goalRight;
+			if(abs(snappedLeft-left) > 0){
+				left += (snappedLeft - left) / slowness;
+				if(abs(snappedLeft - left) == 1){
+					left = snappedLeft;
+				}
+			}
+			if(abs(snappedRight-right) > 0){
+				right += (snappedRight - right) / 4;
+				if(abs(snappedRight - right) == 1){
+					right = snappedRight;
+				}
+			}
 		}
 	}
 }
