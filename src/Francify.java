@@ -1,6 +1,9 @@
 import processing.core.PApplet;
+import processing.core.PFont;
 
 public class Francify extends PApplet {
+
+	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
@@ -9,18 +12,25 @@ public class Francify extends PApplet {
 	Slider s;
 	boolean unpressed;
 	boolean movingSlider, leftHandle, rightHandle;
-
+	static int fontSize = 10;
+	PFont myFont;
+	PFont largerFont;
+	int rangeMin, rangeMax;
+	
 	public void setup() {
 		size(800, 600);
 		frameRate(30);
 		
 		s = new Slider(50, 500, 700, 50);
-		s.setValues(new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12});
+		s.setValues(new int[]{1900,1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912});
 		unpressed = true;
 		movingSlider = false;
 		leftHandle = false;
 		rightHandle = false;
 
+		myFont = createFont("BrowalliaNew", fontSize);
+		largerFont = createFont("BrowalliaNew", 24);
+		
 		// Handle data import
 	}
 
@@ -30,8 +40,21 @@ public class Francify extends PApplet {
 		background(0xcccccc);
 		drawAxes();
 		s.drawSlider();
+		drawRange();
 		handleInput();
 		updateAnim();
+	}
+	
+	public void drawRange(){
+		String ranges = rangeMin + " - " + rangeMax;
+		if(rangeMin == rangeMax)
+			ranges = ""+rangeMin;
+		int rangeWidth = (int)(textWidth(ranges) + 0.5);
+		int rangeX = getWidth()/2 - rangeWidth/2;
+		int rangeY = getHeight()-25 + 12;
+		fill(0,0,0);
+		textFont(largerFont);
+		text(ranges, rangeX, rangeY);
 	}
 	
 	public void handleInput(){
@@ -116,6 +139,8 @@ public class Francify extends PApplet {
 
 		public void setValues(int[] values) {
 			this.values = values;
+			rangeMin = values[0];
+			rangeMax = values[values.length-1];
 		}
 
 		public void drawSlider() {
@@ -123,9 +148,10 @@ public class Francify extends PApplet {
 			
 			// Draw underlying data
 			fill(0,0,0);
+			textFont(myFont);
 			for(int i = 0; i < values.length; i++){
 				int xpos = x + (i) * w / (values.length) + w / (2*values.length);
-				ellipse(xpos,y+h/2,10,10);
+				text(values[i],xpos - (int)(textWidth(""+values[i])+0.5)/2, y+h/2 + fontSize/2);
 			}
 
 			// Draw main bar
@@ -211,20 +237,20 @@ public class Francify extends PApplet {
 			float ratioL = leftX / (float)w;
 			int index = (int)(ratioL * values.length + 0.5);
 			snappedLeft = x + w * index / values.length;
+			rangeMin = values[index];
 			
 			int rightX = goalRight - x;
 			float ratioR = rightX / (float)w;
 			index = (int)(ratioR * values.length + 0.5);
 			snappedRight = x + w * index / values.length;
+			rangeMax = values[index-1];
 		}
 		
 		public float getLeftBound(){
-			//TODO: fix after adding data snap points
 			return left;
 		}
 		
 		public float getRightBound(){
-			//TODO: fix after adding data snap points
 			return right;
 		}
 		
