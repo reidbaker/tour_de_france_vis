@@ -1,5 +1,4 @@
 import processing.core.PApplet;
-import processing.core.PFont;
 
 public class Francify extends PApplet {
 
@@ -74,6 +73,7 @@ public class Francify extends PApplet {
 		movingSlider = false;
 		leftHandle = false;
 		rightHandle = false;
+		s.updateGoals();
 	}
 
 	public void drawAxes() {
@@ -207,7 +207,15 @@ public class Francify extends PApplet {
 		}
 		
 		public void snapGoals(){
-			//TODO: Figure this out.  How to snap to only valid locations around data points.
+			int leftX = goalLeft - x;
+			float ratioL = leftX / (float)w;
+			int index = (int)(ratioL * values.length + 0.5);
+			snappedLeft = x + w * index / values.length;
+			
+			int rightX = goalRight - x;
+			float ratioR = rightX / (float)w;
+			index = (int)(ratioR * values.length + 0.5);
+			snappedRight = x + w * index / values.length;
 		}
 		
 		public float getLeftBound(){
@@ -220,9 +228,12 @@ public class Francify extends PApplet {
 			return right;
 		}
 		
+		public void updateGoals(){
+			goalLeft = snappedLeft;
+			goalRight = snappedRight;
+		}
+		
 		public void updateAnim(int slowness){
-			snappedLeft = goalLeft;
-			snappedRight = goalRight;
 			if(abs(snappedLeft-left) > 0){
 				left += (snappedLeft - left) / slowness;
 				if(abs(snappedLeft - left) == 1){
