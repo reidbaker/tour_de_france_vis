@@ -22,7 +22,12 @@ public class Francify extends PApplet {
 		frameRate(30);
 		
 		s = new Slider(50, 500, 700, 50);
-		s.setValues(new int[]{1900,1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912});
+		int[] vals = new int[105];
+		for(int i = 0; i < vals.length; i++){
+			vals[i] = 1905 + i;
+		}
+//		s.setValues(new int[]{1900,1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912});
+		s.setValues(vals);
 		unpressed = true;
 		movingSlider = false;
 		leftHandle = false;
@@ -43,6 +48,23 @@ public class Francify extends PApplet {
 		drawRange();
 		handleInput();
 		updateAnim();
+		if (!mousePressed)
+			updateCursor();
+	}
+	
+	public void updateCursor(){
+		int pos = s.whereIs(mouseX, mouseY);
+		switch(pos){
+		case Slider.OUTSIDE:
+			cursor(ARROW);
+			break;
+		case Slider.INSIDE:
+			cursor(MOVE);
+			break;
+		case Slider.LEFTSLIDER:
+		case Slider.RIGHTSLIDER:
+			cursor(HAND);
+		}
 	}
 	
 	public void drawRange(){
@@ -189,7 +211,7 @@ public class Francify extends PApplet {
 
 		public int whereIs(int x, int y) {
 			int ret = OUTSIDE;
-			if (x > left && x < right && y > this.y && y < this.y + h) {
+			if (x >= left && x <= right && y > this.y && y < this.y + h) {
 				ret = INSIDE;
 			} else if (x > left - 10 && x < left && y > this.y
 					&& y < this.y + h) {
