@@ -3,19 +3,19 @@
 public class RaceRow implements Comparable<RaceRow>{
 	
 	public int year, firstCountryID, secondCountryID, thirdCountryID,
-			numStages, distance;
+			numStages;
 	public String firstPlaceRider, firstPlaceCountry, firstPlaceTeam,
 			secondPlaceRider, secondPlaceCountry, secondPlaceTeam,
 			thirdPlaceRider, thirdPlaceCountry, thirdPlaceTeam, bestTeam;
-	public float c2nd, c3rd, avgSpeed;
+	public float c2nd, c3rd, avgSpeed, distance;
 	
 	public RaceRow(){
 		year = firstCountryID = secondCountryID = thirdCountryID =
-		numStages = distance = 0;
+		numStages = 0;
 		firstPlaceRider = firstPlaceCountry = firstPlaceTeam =
 		secondPlaceRider = secondPlaceCountry = secondPlaceTeam =
 		thirdPlaceRider = thirdPlaceCountry = thirdPlaceTeam = bestTeam = null;
-		c2nd = c3rd = avgSpeed = 0.0f;
+		c2nd = c3rd = avgSpeed = distance = 0.0f;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 import java.io.File;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -49,7 +48,35 @@ public class Francify extends PApplet {
 			String[] parts = lines[i].split(",");
 			RaceRow rr = new RaceRow();
 			rr.year = Integer.parseInt(parts[0]);
+			
+			rr.firstPlaceRider = parts[1];
+			rr.firstCountryID = Integer.parseInt(parts[2]);
+			rr.firstPlaceCountry = parts[3];
+			rr.firstPlaceTeam = parts[4];
+			
+			rr.secondPlaceRider = parts[5];
+			rr.c2nd = Float.parseFloat(parts[6]);
+			rr.secondCountryID = Integer.parseInt(parts[7]);
+			rr.secondPlaceCountry = parts[8];
+			rr.secondPlaceTeam = parts[9];
+
+			rr.thirdPlaceRider = parts[10];
+			rr.c3rd = Float.parseFloat(parts[11]);
+			rr.thirdCountryID = Integer.parseInt(parts[12]);
+			rr.thirdPlaceCountry = parts[13];
+			rr.thirdPlaceTeam = parts[14];
+			
+			rr.numStages = Integer.parseInt(parts[15]);
+			if (parts.length > 16 && !parts[16].equals(""))
+				rr.distance = Float.parseFloat(parts[16]);
+			if (parts.length > 17 && !parts[17].equals(""))
+				rr.avgSpeed = Float.parseFloat(parts[17]);
+			if (parts.length > 18)
+				rr.bestTeam = parts[18];
 			data.put(rr.year, rr);
+		}
+		for(Integer i : data.keySet()){
+			System.out.println(i + " - " + data.get(i).firstPlaceRider);
 		}
 	}
 
