@@ -1,3 +1,7 @@
+import java.io.File;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import processing.core.PApplet;
 import processing.core.PFont;
 
@@ -17,14 +21,16 @@ public class Francify extends PApplet {
 	PFont largerFont;
 	int rangeMin, rangeMax;
 	
+	TreeMap<Integer, RaceRow> data;
+	
 	public void setup() {
 		size(800, 600);
 		frameRate(30);
 		
 		s = new Slider(50, 500, 700, 50);
-		int[] vals = new int[105];
+		int[] vals = new int[38];
 		for(int i = 0; i < vals.length; i++){
-			vals[i] = 1905 + i;
+			vals[i] = i;
 		}
 //		s.setValues(new int[]{1900,1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912});
 		s.setValues(vals);
@@ -37,6 +43,14 @@ public class Francify extends PApplet {
 		largerFont = createFont("BrowalliaNew", 24);
 		
 		// Handle data import
+		data = new TreeMap<Integer, RaceRow>();
+		String[] lines = loadStrings("data"+File.separator+"Tour_De_France_Data.csv");
+		for(int i = 1; i < lines.length; i++){
+			String[] parts = lines[i].split(",");
+			RaceRow rr = new RaceRow();
+			rr.year = Integer.parseInt(parts[0]);
+			data.put(rr.year, rr);
+		}
 	}
 
 	public void draw() {
