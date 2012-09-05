@@ -1,6 +1,5 @@
 import java.io.File;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -44,13 +43,28 @@ public class Francify extends PApplet {
 		
 		// Handle data import
 		data = new TreeMap<Integer, RaceRow>();
-		String[] lines = loadStrings("data"+File.separator+"Tour_De_France_Data.csv");
-		for(int i = 1; i < lines.length; i++){
-			String[] parts = lines[i].split(",");
-			RaceRow rr = new RaceRow();
-			rr.year = Integer.parseInt(parts[0]);
-			data.put(rr.year, rr);
-		}
+//		String[] lines = loadStrings("data"+File.separator+"Tour_De_France_Data.csv");
+//		for(int i = 1; i < lines.length; i++){
+//			String[] parts = lines[i].split(",");
+//			RaceRow rr = new RaceRow();
+//			rr.year = Integer.parseInt(parts[0]);
+//            data.put(rr.year, rr);
+//		}
+		//TODO remove hardcode
+        RaceRow r1 = new RaceRow();
+		r1.year = 1903;
+		r1.distance = 2428;
+	    data.put(r1.year, r1);
+
+        RaceRow r2 = new RaceRow();
+	    r2.year = 1904;
+        r2.distance = 2428;
+        data.put(r2.year, r2);
+
+        RaceRow r3 = new RaceRow();
+        r3.year = 1905;
+        r3.distance = 2994;
+        data.put(r3.year, r3);
 	}
 
 	public void draw() {
@@ -124,7 +138,8 @@ public class Francify extends PApplet {
 	
 	public void updateAnim(){
 		// Update animation values (simple spring animation)
-		s.updateAnim(4);
+	    int speed = 4;
+	    s.updateAnim(speed);
 	}
 
 	public void mouseReleased() {
@@ -147,7 +162,9 @@ public class Francify extends PApplet {
 
 	public void drawData(float minBound, float maxBound) {
 		// Set colors and draw lines. Use a thicker stroke if possible
-		
+	    int curMinBound = (int)minBound;
+	    int curMaxBound = (int)maxBound;
+	    
 	}
 
 	private class Slider {
