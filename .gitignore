@@ -1,4 +1,7 @@
-﻿# Compiled source #
+﻿# Eclipse project files
+.project
+
+# Compiled source #
 ###################
 *.class
 *.pyc
@@ -15,7 +18,7 @@
 *.dmg
 *.gz
 *.iso
-#S*.jar
+#*.jar
 *.rar
 *.tar
 *.zip
