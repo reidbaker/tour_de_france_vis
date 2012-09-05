@@ -75,6 +75,7 @@ public class Francify extends PApplet {
 		s.drawSlider();
 		drawRange();
 		handleInput();
+		drawData(s.getLeftBound(), s.getRightBound());
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
@@ -162,9 +163,32 @@ public class Francify extends PApplet {
 
 	public void drawData(float minBound, float maxBound) {
 		// Set colors and draw lines. Use a thicker stroke if possible
-	    int curMinBound = (int)minBound;
-	    int curMaxBound = (int)maxBound;
-	    
+	    int curMinBound = 1902;
+	    int curMaxBound = 1906;
+	    for(int i = curMinBound; i<= curMaxBound; i++){
+	        RaceRow rr = data.get(i);
+	        if (rr != null){
+	            float x = mapToPlotX(rr.year, curMinBound, curMaxBound);
+	            float y = mapToPlotY(rr.distance);
+	            ellipse(x,y,5,5);
+	        }
+	        else{
+	            System.out.println("Null data at key: " + i);    
+	        }
+	    }
+
+	}
+	
+	public float mapToPlotY(float y){
+	    int axisMin = 2400;
+	    int axisMax = 3100;
+	    float newY = map(y, axisMin, axisMax, 50, 450);
+	    return newY;
+	}
+	
+	public float mapToPlotX(float x, float minBound, float maxBound){
+	    float newX = map(x, minBound, maxBound, 50, 750);
+	    return newX;
 	}
 
 	private class Slider {
