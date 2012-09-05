@@ -20,7 +20,7 @@ public class Francify extends PApplet {
 	static int fontSize = 10;
 	PFont myFont;
 	PFont largerFont;
-	int rangeMin, rangeMax;
+	int rangeMin, rangeMax, minSYear, maxSYear;
 	int currentDisplayed;
 	
 	float minSpeed, maxSpeed, minDistance, maxDistance;
@@ -33,13 +33,6 @@ public class Francify extends PApplet {
 		frameRate(30);
 		currentDisplayed = PART_ONE;
 		
-		s = new Slider(50, 500, 700, 50);
-		int[] vals = new int[38];
-		for(int i = 0; i < vals.length; i++){
-			vals[i] = i;
-		}
-//		s.setValues(new int[]{1900,1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912});
-		s.setValues(vals);
 		unpressed = true;
 		movingSlider = false;
 		leftHandle = false;
@@ -54,12 +47,18 @@ public class Francify extends PApplet {
 		
 		minSpeed = minDistance = Float.MAX_VALUE;
 		maxSpeed = maxDistance = 0.0f;
-		
+		minSYear = Integer.MAX_VALUE;
+		maxSYear = Integer.MIN_VALUE;
+				
 		String[] lines = loadStrings("data"+File.separator+"Tour_De_France_Data.csv");
 		for(int i = 1; i < lines.length; i++){
 			String[] parts = lines[i].split(",");
 			RaceRow rr = new RaceRow();
 			rr.year = Integer.parseInt(parts[0]);
+			if(rr.year > maxSYear)
+				maxSYear = rr.year;
+			if(rr.year < minSYear)
+				minSYear = rr.year;
 			
 			rr.firstPlaceRider = parts[1];
 			rr.firstCountryID = Integer.parseInt(parts[2]);
@@ -108,6 +107,13 @@ public class Francify extends PApplet {
 		for(Integer i : data.keySet()){
 			System.out.println(i + " - " + data.get(i).firstPlaceRider);
 		}
+		
+		s = new Slider(50, 500, 700, 50);
+		int[] vals = new int[maxSYear - minSYear];
+		for(int i = minSYear; i < maxSYear; i++){
+			vals[i-minSYear] = i;
+		}
+		s.setValues(vals);
 	}
 
 	public void draw() {
@@ -222,28 +228,24 @@ public class Francify extends PApplet {
 		// Draw Labels
 	}
 
-	public void drawData(float minBound, float maxBound) {
+	public void drawData(int minBound, int maxBound) {
 		// Set colors and draw lines. Use a thicker stroke if possible
-	    int curMinBound = 1902;
-	    int curMaxBound = 2000;
-	    for(int i = curMinBound; i<= curMaxBound; i++){
+	    for(int i = minBound; i<= maxBound; i++){
 	        RaceRow rr = data.get(i);
 	        if (rr != null){
-	            float x = mapToPlotX(rr.year, curMinBound, curMaxBound);
+	            float x = mapToPlotX(rr.year, minBound, maxBound);
 	            float y = mapToPlotY(rr.distance);
 	            ellipse(x,y,5,5);
 	        }
 	        else{
-	            System.out.println("Null data at key: " + i);    
+//	            System.out.println("Null data at key: " + i);    
 	        }
 	    }
 
 	}
 	
 	public float mapToPlotY(float y){
-	    int axisMin = 2400;
-	    int axisMax = 4500;
-	    float newY = map(y, axisMin, axisMax, 50, 450);
+	    float newY = map(y, minDistance, maxDistance, 450, 50);
 	    return newY;
 	}
 	
@@ -384,15 +386,15 @@ public class Francify extends PApplet {
 			rangeMax = values[index-1];
 		}
 		
-		public float getLeftBound(){
-			int leftX = goalLeft - x;
+		public int getLeftBound(){
+			int leftX = left - x;
 			float ratioL = leftX / (float)w;
 			int index = (int)(ratioL * values.length + 0.5);
 			return values[index];
 		}
 		
-		public float getRightBound(){
-			int rightX = goalRight - x;
+		public int getRightBound(){
+			int rightX = right - x;
 			float ratioR = rightX / (float)w;
 			int index = (int)(ratioR * values.length + 0.5);
 			return values[index-1];
