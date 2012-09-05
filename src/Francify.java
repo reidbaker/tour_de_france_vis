@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.Set;
 import java.util.TreeMap;
 
 import processing.core.PApplet;
@@ -7,6 +8,7 @@ import processing.core.PFont;
 public class Francify extends PApplet {
 
 	private static final long serialVersionUID = 1L;
+	public static final int PART_ONE = 0, PART_TWO = 1;
 
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
@@ -19,12 +21,17 @@ public class Francify extends PApplet {
 	PFont myFont;
 	PFont largerFont;
 	int rangeMin, rangeMax;
+	int currentDisplayed;
+	
+	float minSpeed, maxSpeed, minDistance, maxDistance;
 	
 	TreeMap<Integer, RaceRow> data;
+	TreeMap<String, Integer> numMedals;
 	
 	public void setup() {
 		size(800, 600);
 		frameRate(30);
+		currentDisplayed = PART_ONE;
 		
 		s = new Slider(50, 500, 700, 50);
 		int[] vals = new int[38];
@@ -43,28 +50,64 @@ public class Francify extends PApplet {
 		
 		// Handle data import
 		data = new TreeMap<Integer, RaceRow>();
-//		String[] lines = loadStrings("data"+File.separator+"Tour_De_France_Data.csv");
-//		for(int i = 1; i < lines.length; i++){
-//			String[] parts = lines[i].split(",");
-//			RaceRow rr = new RaceRow();
-//			rr.year = Integer.parseInt(parts[0]);
-//            data.put(rr.year, rr);
-//		}
-		//TODO remove hardcode
-        RaceRow r1 = new RaceRow();
-		r1.year = 1903;
-		r1.distance = 2428;
-	    data.put(r1.year, r1);
+		numMedals = new TreeMap<String, Integer>();
+		
+		minSpeed = minDistance = Float.MAX_VALUE;
+		maxSpeed = maxDistance = 0.0f;
+		
+		String[] lines = loadStrings("data"+File.separator+"Tour_De_France_Data.csv");
+		for(int i = 1; i < lines.length; i++){
+			String[] parts = lines[i].split(",");
+			RaceRow rr = new RaceRow();
+			rr.year = Integer.parseInt(parts[0]);
+			
+			rr.firstPlaceRider = parts[1];
+			rr.firstCountryID = Integer.parseInt(parts[2]);
+			rr.firstPlaceCountry = parts[3];
+			rr.firstPlaceTeam = parts[4];
+			
+			rr.secondPlaceRider = parts[5];
+			rr.c2nd = Float.parseFloat(parts[6]);
+			rr.secondCountryID = Integer.parseInt(parts[7]);
+			rr.secondPlaceCountry = parts[8];
+			rr.secondPlaceTeam = parts[9];
 
-        RaceRow r2 = new RaceRow();
-	    r2.year = 1904;
-        r2.distance = 2428;
-        data.put(r2.year, r2);
-
-        RaceRow r3 = new RaceRow();
-        r3.year = 1905;
-        r3.distance = 2994;
-        data.put(r3.year, r3);
+			rr.thirdPlaceRider = parts[10];
+			rr.c3rd = Float.parseFloat(parts[11]);
+			rr.thirdCountryID = Integer.parseInt(parts[12]);
+			rr.thirdPlaceCountry = parts[13];
+			rr.thirdPlaceTeam = parts[14];
+			
+			rr.numStages = Integer.parseInt(parts[15]);
+			if (parts.length > 16 && !parts[16].equals("")){
+				rr.distance = Float.parseFloat(parts[16]);
+				if(rr.distance > maxDistance)
+					maxDistance = rr.distance;
+				if(rr.distance < minDistance)
+					minDistance = rr.distance;
+			}
+			if (parts.length > 17 && !parts[17].equals("")){
+				rr.avgSpeed = Float.parseFloat(parts[17]);
+				if(rr.avgSpeed > maxSpeed)
+					maxSpeed = rr.avgSpeed;
+				if(rr.distance < minSpeed)
+					minSpeed = rr.avgSpeed;
+			}
+			if (parts.length > 18)
+				rr.bestTeam = parts[18];
+			
+			Integer medals = numMedals.get(rr.firstPlaceCountry);
+			if(medals == null){
+				numMedals.put(rr.firstPlaceCountry, 1);
+			} else {
+				numMedals.put(rr.firstPlaceCountry, medals + 1);
+			}
+			
+			data.put(rr.year, rr);
+		}
+		for(Integer i : data.keySet()){
+			System.out.println(i + " - " + data.get(i).firstPlaceRider);
+		}
 	}
 
 	public void draw() {
@@ -90,8 +133,8 @@ public class Francify extends PApplet {
 		case Slider.INSIDE:
 			cursor(MOVE);
 			break;
-		case Slider.LEFTSLIDER:
-		case Slider.RIGHTSLIDER:
+		case Slider.LEFTHANDLE:
+		case Slider.RIGHTHANDLE:
 			cursor(HAND);
 		}
 	}
@@ -118,9 +161,9 @@ public class Francify extends PApplet {
 				int loc = s.whereIs(mouseX, mouseY);
 				if (loc == Slider.INSIDE)
 					movingSlider = true;
-				else if (loc == Slider.LEFTSLIDER)
+				else if (loc == Slider.LEFTHANDLE)
 					leftHandle = true;
-				else if (loc == Slider.RIGHTSLIDER)
+				else if (loc == Slider.RIGHTHANDLE)
 					rightHandle = true;
 			} else {
 				// Everything in this block occurs when the mose has been
@@ -149,6 +192,24 @@ public class Francify extends PApplet {
 		leftHandle = false;
 		rightHandle = false;
 		s.updateGoals();
+	}
+	
+	public void toggleView(){
+		// FIXME: Finish this method
+		if(currentDisplayed == PART_ONE){
+			s = new Slider(50,700,500,150);
+			Set<Integer> keys = data.keySet();
+			int min = Integer.MAX_VALUE, max = 0;
+			for(int i : keys){
+				if(i < min)
+					min = i;
+				if(i > max)
+					max = i;
+			}
+		} else {
+			s = new Slider(50,700,500,150);
+		}
+		currentDisplayed = (currentDisplayed + 1) % 2;
 	}
 
 	public void drawAxes() {
@@ -199,8 +260,8 @@ public class Francify extends PApplet {
 
 		int[] values;
 
-		public static final int OUTSIDE = 0, INSIDE = 1, LEFTSLIDER = 2,
-				RIGHTSLIDER = 3;
+		public static final int OUTSIDE = 0, INSIDE = 1, LEFTHANDLE = 2,
+				RIGHTHANDLE = 3;
 
 		public Slider(int x, int y, int w, int h) {
 			this.left = this.x = x;
@@ -270,10 +331,10 @@ public class Francify extends PApplet {
 				ret = INSIDE;
 			} else if (x > left - 10 && x < left && y > this.y
 					&& y < this.y + h) {
-				ret = LEFTSLIDER;
+				ret = LEFTHANDLE;
 			} else if (x > right && x < right + 10 && y > this.y
 					&& y < this.y + h) {
-				ret = RIGHTSLIDER;
+				ret = RIGHTHANDLE;
 			}
 			return ret;
 		}
@@ -324,11 +385,17 @@ public class Francify extends PApplet {
 		}
 		
 		public float getLeftBound(){
-			return left;
+			int leftX = goalLeft - x;
+			float ratioL = leftX / (float)w;
+			int index = (int)(ratioL * values.length + 0.5);
+			return values[index];
 		}
 		
 		public float getRightBound(){
-			return right;
+			int rightX = goalRight - x;
+			float ratioR = rightX / (float)w;
+			int index = (int)(ratioR * values.length + 0.5);
+			return values[index-1];
 		}
 		
 		public void updateGoals(){
