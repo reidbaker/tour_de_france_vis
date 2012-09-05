@@ -225,7 +225,7 @@ public class Francify extends PApplet {
 	public void drawData(float minBound, float maxBound) {
 		// Set colors and draw lines. Use a thicker stroke if possible
 	    int curMinBound = 1902;
-	    int curMaxBound = 1906;
+	    int curMaxBound = 2000;
 	    for(int i = curMinBound; i<= curMaxBound; i++){
 	        RaceRow rr = data.get(i);
 	        if (rr != null){
@@ -242,7 +242,7 @@ public class Francify extends PApplet {
 	
 	public float mapToPlotY(float y){
 	    int axisMin = 2400;
-	    int axisMax = 3100;
+	    int axisMax = 4500;
 	    float newY = map(y, axisMin, axisMax, 50, 450);
 	    return newY;
 	}
