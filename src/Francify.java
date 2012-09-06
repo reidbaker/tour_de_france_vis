@@ -9,7 +9,9 @@ public class Francify extends PApplet {
 
 	private static final long serialVersionUID = 1L;
 	public static final int PART_ONE = 0, PART_TWO = 1;
-
+	public static final boolean DRAW_DISTANCE = true;
+	public static final boolean DRAW_SPEED= false;
+	
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
 	}
@@ -128,8 +130,8 @@ public class Francify extends PApplet {
 		s.drawSlider();
 		drawRange();
 		handleInput();
-		drawAvgSpeedData(s.getLeftBound(), s.getRightBound());
-		drawDistanceData(s.getLeftBound(), s.getRightBound());
+		drawDistanceData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
+		drawDistanceData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
@@ -278,25 +280,31 @@ public class Francify extends PApplet {
         return newY;
     }
 
-	public void drawDistanceData(int minBound, int maxBound) {
-		// Set colors and draw lines. Use a thicker stroke if possible
+	public void drawDistanceData(boolean distanceOrSpeed, int minBound, int maxBound) {
+		// Set colors and draw lines.
 	    noFill();
 	    beginShape();
+        strokeWeight(3);
+
+        //Get and draw data
+        float y;
 	    for(int i = minBound; i < maxBound; i++){
 	        RaceRow rr0 = data.get(i);
-	        RaceRow rr1 = data.get(i+1);
-	        if ((rr0 != null) && (rr1 != null) && (rr0.distance > 0) && (rr1.distance > 0)){
-	            float x0 = mapToPlotX(rr0.year, minBound, maxBound);
-	            float y0 = mapDistanceToPlotY(rr0.distance);
-	          //show data points
-                stroke(rgba(darkColor, 0x88));
-                strokeWeight(3);
-	            curveVertex(x0,y0);
+	        if ((rr0 != null) && (rr0.distance > 0)){
+	            float year = mapToPlotX(rr0.year, minBound, maxBound);
+	            if (distanceOrSpeed == DRAW_DISTANCE){
+	                y = mapDistanceToPlotY(rr0.distance);	                
+	                stroke(rgba(darkColor, 0x88));
+	            }
+	            else { //(distanceOrSpeed == DRAW_SPEED)
+	                y = mapAvgSpeedToPlotY(rr0.avgSpeed);
+	                stroke(0x8888c23c);
+	            }
+	            curveVertex(year, y);
 	        }
 	        else{
 	            endShape();
 	            beginShape();
-//	            System.out.println("Null data at key: " + i);    
 	        }
 	    }
         endShape();
