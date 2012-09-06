@@ -432,7 +432,9 @@ public class Francify extends PApplet {
 			vertex(x+w, y);
 			vertex(x+w, y+h);
 			endShape();
-			
+
+			drawData(DRAW_DISTANCE, values[0], values[values.length -1], 1, x, y, w, h);
+			drawData(DRAW_SPEED, values[0], values[values.length -1], 1, x, y, w, h);
 			
 			// Draw underlying data
 			fill(0,0,0);
