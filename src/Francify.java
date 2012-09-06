@@ -281,68 +281,80 @@ public class Francify extends PApplet {
 		popMatrix();
 	}
 
-	public void drawData(boolean distanceOrSpeed, int minBound, int maxBound) {
-		// Set colors and draw lines.
-	    noFill();
-	    beginShape();
-        strokeWeight(3);
+    public void drawData(boolean distanceOrSpeed, int minBound, int maxBound,
+            int strokeWidth, float graphX, float graphY, float graphWidth,
+            float graphHeight) {
+        // Set colors and draw lines.
+        noFill();
+        beginShape();
+        strokeWeight(strokeWidth);
 
         //Get and draw data
-		float y = 0, lastX = 0; 
-		// Weather it is actively drawing or not. Prevents drawing all
-		// points in gaps of data
-		boolean activeDraw = true;
-	    for(int i = minBound; i <= maxBound; i++){
-	        RaceRow rr0 = data.get(i);
-	        if ((rr0 != null) && (rr0.distance > 0)){
-	            float year = mapToPlotX(rr0.year, minBound, maxBound);
-	            if (distanceOrSpeed == DRAW_DISTANCE){
-	                y = mapToPlotY(rr0.distance, minDistance, maxDistance);	                
-	                stroke(rgba(dataColor0, 0x88));
-	            }
-	            else { //(distanceOrSpeed == DRAW_SPEED)
-	                y = mapToPlotY(rr0.avgSpeed, minSpeed, maxSpeed);
-	                stroke(rgba(dataColor1, 0x88));
-	            }
-	            if(!activeDraw){
-	            	activeDraw = true;
-	            	curveVertex(year, y);
-	            }
-	            if(i == minBound || i == maxBound){
-	            	curveVertex(year, y);
-	            }
-	            curveVertex(year, y);
-	            lastX = year;
-	        }
-	        else{
-	        	if(activeDraw){
-	        		activeDraw = false;
-	        		curveVertex(lastX, y);
-	        	}
-	            endShape();
-	            beginShape();
-	        }
-	    }
+        float y = 0, lastX = 0; 
+        // Weather it is actively drawing or not. Prevents drawing all
+        // points in gaps of data
+        boolean activeDraw = true;
+        for(int i = minBound; i <= maxBound; i++){
+            RaceRow rr = data.get(i);
+            if ((rr != null) && (rr.distance > 0)){
+                float year = mapToPlotX(rr.year, minBound, maxBound, graphX, graphWidth);
+                if (distanceOrSpeed == DRAW_DISTANCE){
+                    y = mapToPlotY(rr.distance, minDistance, maxDistance,
+                            graphY, graphHeight);
+                    stroke(rgba(dataColor0, 0x88));
+                }
+                else { //(distanceOrSpeed == DRAW_SPEED)
+                    y = mapToPlotY(rr.avgSpeed, minSpeed, maxSpeed,
+                            graphY, graphHeight);
+                    stroke(rgba(dataColor1, 0x88));
+                }
+                if(!activeDraw){
+                    activeDraw = true;
+                    curveVertex(year, y);
+                }
+
+                if(i == minBound || i == maxBound){
+                    curveVertex(year, y);
+                }
+                curveVertex(year, y);
+                lastX = year;
+            }
+            else{
+                if(activeDraw){
+                    activeDraw = false;
+                    curveVertex(lastX, y);
+                }
+                endShape();
+                beginShape();
+            }
+        }
         endShape();
-	}
+    }
+
+    public void drawData(boolean distanceOrSpeed, int minBound, int maxBound) {
+        drawData(distanceOrSpeed, minBound, maxBound, 3, graphX, graphY,
+                graphW, graphH);
+    }
 	
-    public float mapToPlotY(float y, float min, float max) {
-        //Maps actual values to locations we want to draw
+    public float mapToPlotY(float y, float min, float max, float graphY,
+            float graphHeight) {
+        // Maps actual values to locations we want to draw
         //Uses 10% buffer to make data more readable
         int buffer = (int) ((max - min) * 0.1);
         float newY = map(
                 y,
                 min - buffer,
                 max + buffer,
-                graphY + graphH,
+                graphY + graphHeight,
                 graphY
         );
         return newY;
     }
 	
-	public float mapToPlotX(float x, float minBound, float maxBound){
-	    float newX = map(x, minBound, maxBound, graphX, graphX + graphW);
-	    return newX;
+    public float mapToPlotX(float x, float minBound, float maxBound,
+            float graphX, float graphWidth) {
+        float newX = map(x, minBound, maxBound, graphX, graphX + graphWidth);
+    return newX;
 	}
 
 	public int rgba(int rgb, int a){
