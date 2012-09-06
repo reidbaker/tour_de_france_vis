@@ -252,14 +252,12 @@ public class Francify extends PApplet {
 	            float x0 = mapToPlotX(rr0.year, minBound, maxBound);
 	            float y0 = mapToPlotY(rr0.distance);
 	          //show data points
-                fill(204, 102, 0);
                 ellipse(x0, y0, pointSize, pointSize);
 	        }
 	        else if (rr1 != null){
 	            float x1 = mapToPlotX(rr1.year, minBound, maxBound);
                 float y1 = mapToPlotY(rr1.distance);
 	          //show data points
-	            fill(204, 102, 0);
 	            ellipse(x1, y1, pointSize, pointSize);
 	        }
 	        else{
