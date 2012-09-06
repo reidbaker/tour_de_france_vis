@@ -212,10 +212,7 @@ public class Francify extends PApplet {
 			updateCursor();
 
 		//bar graph code
-		ArrayList<String> countries = new ArrayList<String>();
-		countries.add("France");
-		countries.add("Germany");
-		countries.add("USA");
+		ArrayList<String> countries = filterByMedals(10, 37);
 		drawBarGraph(countries);
 	}
 	
@@ -642,6 +639,18 @@ public class Francify extends PApplet {
         float newX = map(x, minBound, maxBound, graphX, graphX + graphWidth);
     return newX;
 	}
+
+    public ArrayList<String> filterByMedals(int min, int max){
+        Set<String> keys = numMedals.keySet();
+        ArrayList<String> filtered = new ArrayList<String>();
+        for(String country:keys){
+            int num = numMedals.get(country);
+            if ((num <= max) && (num >= min)){
+                filtered.add(country);
+            }
+        }
+        return filtered;
+    }
 
     public void drawBarGraph(ArrayList<String> countries){
         float distanceBetween = 10;
