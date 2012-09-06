@@ -397,6 +397,17 @@ public class Francify extends PApplet {
 	}
 
 	public void drawAxes() {
+//	     ,  /\  .
+//	    //`-||-'\\
+//	   (| -=||=- |)
+//	    \\,-||-.//
+//	     `  ||  '
+//	        ||
+//	        ||
+//	        ||
+//	        ||
+//	        ||
+//	        ()
 		// Draw Axes Lines
 		stroke(darkColor);
 		strokeWeight(3);
