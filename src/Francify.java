@@ -159,9 +159,9 @@ public class Francify extends PApplet {
 		sCurrent = sOne;
 		sliderLabel = "Years";
 
-		//checkboxes
+		//checkboxes for line graph
 		cp5 = new ControlP5(this);
-		lineGraph = cp5.addCheckBox("checkBox")
+		lineGraph = cp5.addCheckBox("LineGraph")
 		        .setPosition(graphW + 100, graphY)
 		        .setColorForeground(dataColor0)
 		        .setColorBackground(backgroundColor)
