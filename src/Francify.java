@@ -243,24 +243,26 @@ public class Francify extends PApplet {
 	}
     public void drawAvgSpeedData(int minBound, int maxBound) {
         // Set colors and draw lines.
-        int pointSize = 5;
+        noFill();
+        beginShape();
         for(int i = minBound; i < maxBound; i++){
             RaceRow rr0 = data.get(i);
             RaceRow rr1 = data.get(i+1);
             if ((rr0 != null) && (rr1 != null) && (rr0.avgSpeed > 0) && (rr1.avgSpeed > 0)){
                 float x0 = mapToPlotX(rr0.year, minBound, maxBound);
                 float y0 = mapAvgSpeedToPlotY(rr0.avgSpeed);
-                float x1 = mapToPlotX(rr1.year, minBound, maxBound);
-                float y1 = mapAvgSpeedToPlotY(rr1.avgSpeed);
                 //Show line
                 stroke(0x8888c23c);
                 strokeWeight(3);
-                line(x0,y0,x1,y1);
+                curveVertex(x0, y0);
             }
             else{
+                endShape();
+                beginShape();
 //              System.out.println("Null data at key: " + i);
             }
         }
+        endShape();
     }
 
     public float mapAvgSpeedToPlotY(float y){
@@ -271,25 +273,26 @@ public class Francify extends PApplet {
 
 	public void drawDistanceData(int minBound, int maxBound) {
 		// Set colors and draw lines. Use a thicker stroke if possible
-	    int pointSize = 5;
+	    noFill();
+	    beginShape();
 	    for(int i = minBound; i < maxBound; i++){
 	        RaceRow rr0 = data.get(i);
 	        RaceRow rr1 = data.get(i+1);
 	        if ((rr0 != null) && (rr1 != null) && (rr0.distance > 0) && (rr1.distance > 0)){
 	            float x0 = mapToPlotX(rr0.year, minBound, maxBound);
 	            float y0 = mapDistanceToPlotY(rr0.distance);
-	            float x1 = mapToPlotX(rr1.year, minBound, maxBound);
-	            float y1 = mapDistanceToPlotY(rr1.distance);
 	          //show data points
                 stroke(darkColor & (0x88 << 24 | 0xFFFFFF));
                 strokeWeight(3);
-	            line(x0,y0,x1,y1);
+	            curveVertex(x0,y0);
 	        }
 	        else{
+	            endShape();
+	            beginShape();
 //	            System.out.println("Null data at key: " + i);    
 	        }
 	    }
-
+        endShape();
 	}
 	
 	public float mapDistanceToPlotY(float y){
