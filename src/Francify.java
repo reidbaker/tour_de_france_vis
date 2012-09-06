@@ -271,8 +271,11 @@ public class Francify extends PApplet {
         strokeWeight(3);
 
         //Get and draw data
-        float y;
-	    for(int i = minBound; i < maxBound; i++){
+		float y = 0, lastX = 0; 
+		// Weather it is actively drawing or not. Prevents drawing all
+		// points in gaps of data
+		boolean activeDraw = true;
+	    for(int i = minBound; i <= maxBound; i++){
 	        RaceRow rr0 = data.get(i);
 	        if ((rr0 != null) && (rr0.distance > 0)){
 	            float year = mapToPlotX(rr0.year, minBound, maxBound);
@@ -284,9 +287,21 @@ public class Francify extends PApplet {
 	                y = mapToPlotY(rr0.avgSpeed, minSpeed, maxSpeed);
 	                stroke(rgba(dataColor1, 0x88));
 	            }
+	            if(!activeDraw){
+	            	activeDraw = true;
+	            	curveVertex(year, y);
+	            }
+	            if(i == minBound || i == maxBound){
+	            	curveVertex(year, y);
+	            }
 	            curveVertex(year, y);
+	            lastX = year;
 	        }
 	        else{
+	        	if(activeDraw){
+	        		activeDraw = false;
+	        		curveVertex(lastX, y);
+	        	}
 	            endShape();
 	            beginShape();
 	        }
