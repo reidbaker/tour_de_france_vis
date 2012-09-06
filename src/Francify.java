@@ -2,6 +2,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
 import controlP5.*;
 
 import processing.core.PApplet;
@@ -700,18 +702,31 @@ public class Francify extends PApplet {
 	}
 
     public ArrayList<String> filterByMedals(int min, int max){
-        //TODO HELP REID
-        Set<String> keys = numMedals.keySet();
-        ArrayList<String> filteredC = new ArrayList<String>();
-        ArrayList<Integer> filteredM = new ArrayList<Integer>();
-        for(String country:keys){
-            int num = numMedals.get(country);
-            if ((num <= max) && (num >= min)){
-                filteredC.add(country);
-                filteredM.add(num);
-            }
+        TreeSet<SortableCountry> toSort = new TreeSet<SortableCountry>();
+        for(String s : numMedals.keySet()){
+        	toSort.add(new SortableCountry(s, numMedals.get(s)));
         }
-        return filteredC;
+        ArrayList<String> names = new ArrayList<String>();
+        for(SortableCountry sc : toSort){
+        	names.add(sc.name);
+        }
+        return names;
+    }
+    
+    private class SortableCountry implements Comparable<SortableCountry>{
+    	public String name;
+    	public int medals;
+    	public SortableCountry(String name, int medals){
+    		this.name = name;
+    		this.medals = medals;
+    	}
+		@Override
+		public int compareTo(SortableCountry o) {
+			int comp = medals - o.medals;
+			if(comp != 0)
+				return comp;
+			else return name.compareTo(o.name);
+		}
     }
 
     public void drawBarGraph(ArrayList<String> countries){
