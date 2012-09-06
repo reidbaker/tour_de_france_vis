@@ -265,11 +265,11 @@ public class Francify extends PApplet {
 	}
 
     public void drawData(boolean distanceOrSpeed, int minBound, int maxBound,
-            int strokeWidth, float x0, float y0, float width, float height) {
+            int strokeWidth, float graphX, float graphY, float graphWidth, float graphHeight) {
         // Set colors and draw lines.
         noFill();
         beginShape();
-        strokeWeight(3);
+        strokeWeight(strokeWidth);
 
         //Get and draw data
         float y;
@@ -278,11 +278,13 @@ public class Francify extends PApplet {
             if ((rr != null) && (rr.distance > 0)){
                 float year = mapToPlotX(rr.year, minBound, maxBound);
                 if (distanceOrSpeed == DRAW_DISTANCE){
-                    y = mapToPlotY(rr.distance, minDistance, maxDistance);                 
+                    y = mapToPlotY(rr.distance, minDistance, maxDistance,
+                            graphX, graphY, graphWidth, graphHeight);
                     stroke(rgba(dataColor0, 0x88));
                 }
                 else { //(distanceOrSpeed == DRAW_SPEED)
-                    y = mapToPlotY(rr.avgSpeed, minSpeed, maxSpeed);
+                    y = mapToPlotY(rr.avgSpeed, minSpeed, maxSpeed,
+                            graphX, graphY, graphWidth, graphHeight);
                     stroke(rgba(dataColor1, 0x88));
                 }
                 curveVertex(year, y);
@@ -300,7 +302,7 @@ public class Francify extends PApplet {
                 graphW, graphH);
     }
 	
-    public float mapToPlotY(float y, float min, float max) {
+    public float mapToPlotY(float y, float min, float max, float graphX, float graphY, float graphW, float graphH) {
         //Maps actual values to locations we want to draw
         //Uses 10% buffer to make data more readable
         int buffer = (int) ((max - min) * 0.1);
