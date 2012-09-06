@@ -25,6 +25,7 @@ public class Francify extends PApplet {
 	PFont largerFont;
 	int rangeMin, rangeMax, minSYear, maxSYear;
 	int currentDisplayed;
+	String sliderLabel, title;
 	
 	float minSpeed, maxSpeed, minDistance, maxDistance;
 	
@@ -115,6 +116,8 @@ public class Francify extends PApplet {
 		}
 		s.setValues(vals);
 		s.setDrawInterval(10);
+		sliderLabel = "Years";
+		title = "Tour de France, 1903 - 2009";
 	}
 
 	public void draw() {
@@ -169,6 +172,10 @@ public class Francify extends PApplet {
 			rangeY = 475;
 			text(range, rangeX, rangeY);
 		}
+		int width = (int)(textWidth(sliderLabel) + 0.5);
+		text(sliderLabel, getWidth()/2 - width/2, 590);
+		width = (int)(textWidth(title)+0.5);
+		text(title, getWidth()/2 - width/2, 25);
 	}
 	
 	public void handleInput(){
