@@ -735,14 +735,27 @@ public class Francify extends PApplet {
         int numCountries = countries.size();
         //evenly divide bars across graph
         if(numCountries > 0){
-        float width = graphW / numCountries;
-        width -= distanceBetween;
-        for(int i=0; i < numCountries; i++){
-            int medalCount = numMedals.get(countries.get(i));
-            float xLoc = graphX + i*distanceBetween + i*width + distanceBetween;
-            drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0, countries.get(i));
+            float width = graphW / numCountries;
+            width -= distanceBetween;
+            if (sortAscending){
+                for(int i=0; i < numCountries; i++){
+                    doBarWork(countries, distanceBetween, width, i);
+                }
+            }
+            else{
+                for(int i=numCountries-1; i >= 0; i--){
+                    doBarWork(countries, distanceBetween, width, i);
+                }
+            }
+
         }
-        }
+    }
+
+    private void doBarWork(ArrayList<String> countries, float distanceBetween,
+            float width, int i) {
+        int medalCount = numMedals.get(countries.get(i));
+        float xLoc = graphX + i*distanceBetween + i*width + distanceBetween;
+        drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0, countries.get(i));
     }
 
     public void drawBar(boolean striped, float amount, float xOffset,
