@@ -136,10 +136,14 @@ public class Francify extends PApplet {
 		background(0xcccccc);
 		drawAxes();
 		s.drawSlider();
-		drawRange();
 		handleInput();
+		try{
 		drawData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
 		drawData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
+		} catch(ArrayIndexOutOfBoundsException ioe){
+			System.err.println("Tried to draw before setup completed");
+			System.exit(-1);
+		}
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
@@ -184,8 +188,8 @@ public class Francify extends PApplet {
 		}
 		int width = (int)(textWidth(sliderLabel) + 0.5);
 		text(sliderLabel, getWidth()/2 - width/2, 590);
-		width = (int)(textWidth(title)+0.5);
-		text(title, getWidth()/2 - width/2, 25);
+		textAlign(CENTER);
+		text(title, getWidth()/2, 25);
 	}
 	
 	public void handleInput(){
@@ -261,7 +265,20 @@ public class Francify extends PApplet {
 		vertex(graphX, graphY + graphH);
 		vertex(graphX + graphW, graphY + graphH);
 		endShape();
+		
 		// Draw Labels
+		drawRange();
+		
+		textFont(largerFont);
+		fill(rgba(dataColor0, 0.75f));
+		pushMatrix();
+		translate(40,graphY+graphH/2);
+		rotate(-PI/2);
+		textAlign(CENTER);
+		text("Distance (km)", 0, 0);
+		fill(rgba(dataColor1, 0.75f));
+		text("Average Speed (mph)", 0, 40);
+		popMatrix();
 	}
 
 	public void drawData(boolean distanceOrSpeed, int minBound, int maxBound) {
@@ -337,7 +354,7 @@ public class Francify extends PApplet {
 			a = 0;
 		if(a > 255)
 			a = 255;
-		return rgba(rgb, a * 255);
+		return rgba(rgb, (int)(a * 255));
 	}
 
 	private class Slider {
@@ -413,6 +430,8 @@ public class Francify extends PApplet {
 					line(xpos, y+h, xpos, y+h - 5);
 				}
 			}
+			
+			//Draw mini graph
 
 			// Draw main bar
 			fill(0, 0, 0, 0);
