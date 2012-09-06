@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
 import controlP5.*;
@@ -205,7 +206,11 @@ public class Francify extends PApplet {
 			updateCursor();
 
 		//bar graph code
-		drawBar(true, 15, graphX, graphY, 30, graphY, graphH, dataColor0);
+		ArrayList<String> countries = new ArrayList<String>();
+		countries.add("France");
+		countries.add("Germany");
+		countries.add("USA");
+		drawBarGraph(countries);
 	}
 	
 	public void detailsOnDemand(RaceRow row){
@@ -545,12 +550,21 @@ public class Francify extends PApplet {
     return newX;
 	}
 
-
+    public void drawBarGraph(ArrayList<String> countries){
+        float distanceBetween = 10;
+        int numCountries = countries.size();
+        float width = graphW / numCountries;
+        for(int i=0; i < numCountries; i++){
+            int medalCount = numMedals.get(countries.get(i));
+            float xLoc = graphX + i*distanceBetween + i*width;
+            drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0);
+        }
+    }
 
     public void drawBar(boolean striped, float amount, float xOffset,
-            float yOffset, float width, float graphY, float graphH, int color) {
+            float yOffset, float width, float graphH, int color) {
 
-        float height = mapToPlotY(amount, 0, 40, graphY, graphH);
+        float height = mapToPlotY(amount, 0, 40, yOffset, graphH);
         float barY = graphH + (yOffset - height);
 
         if (striped) {
