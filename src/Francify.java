@@ -16,9 +16,11 @@ public class Francify extends PApplet {
 	public static final boolean DRAW_SPEED= false;
 
 	public ControlP5 cp5;
-	public CheckBox lineGraph;
-	public boolean enableDistance = true;
+    public CheckBox lineGraph;
+    public CheckBox barGraph;
+    public boolean enableDistance = true;
 	public boolean enableSpeed = true;
+    public boolean sortAssending = true;
 
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
@@ -159,23 +161,37 @@ public class Francify extends PApplet {
 		sCurrent = sOne;
 		sliderLabel = "Years";
 
-		//checkboxes for line graph
-		cp5 = new ControlP5(this);
-		lineGraph = cp5.addCheckBox("LineGraph")
-		        .setPosition(graphW + 100, graphY)
-		        .setColorForeground(dataColor0)
-		        .setColorBackground(backgroundColor)
-		        .setColorActive(dataColor0)
-		        .setColorLabel(darkColor)
-		        .setSize(20, 20)
-		        .setItemsPerRow(1)
-		        .setSpacingColumn(45)
-		        .setSpacingRow(20)
-		        .addItem("Distance", 1)
-		        .addItem("Average Speed", 1)
-		        ;
-		   lineGraph.toggle("Distance");
-		   lineGraph.toggle("Average Speed");
+        // checkboxes for line graph
+        cp5 = new ControlP5(this);
+        lineGraph = cp5.addCheckBox("LineGraph")
+                .setPosition(graphW + 100, graphY)
+                .setColorForeground(dataColor0)
+                .setColorBackground(backgroundColor)
+                .setColorActive(dataColor0)
+                .setColorLabel(darkColor)
+                .setSize(20, 20)
+                .setItemsPerRow(1)
+                .setSpacingColumn(45)
+                .setSpacingRow(20)
+                .addItem("Distance", 1)
+                .addItem("Average Speed", 1);
+        lineGraph.toggle("Distance");
+        lineGraph.toggle("Average Speed");
+
+        // checkboxes for bargraph
+        barGraph= cp5.addCheckBox("BarGraph")
+                .setPosition(graphW + 100, graphY)
+                .setColorForeground(dataColor0)
+                .setColorBackground(backgroundColor)
+                .setColorActive(dataColor0)
+                .setColorLabel(darkColor)
+                .setSize(20, 20)
+                .setItemsPerRow(1)
+                .setSpacingColumn(45)
+                .setSpacingRow(20)
+                .addItem("Assending", 1);
+        barGraph.toggle("Distance");
+        barGraph.setVisible(false);
 	}
 
     public void controlEvent(ControlEvent theEvent) {
@@ -512,10 +528,12 @@ public class Francify extends PApplet {
 			currentDisplayed = (currentDisplayed + 1) % 2;
 			if (currentDisplayed == PART_ONE) {
 				lineGraph.setVisible(true);
+				barGraph.setVisible(false);
 				sCurrent = sOne;
 				sliderLabel = "Years";
 			} else {
 				lineGraph.setVisible(false);
+				barGraph.setVisible(true);
 				sCurrent = sTwo;
 				sliderLabel = "Number of Medals";
 			}
