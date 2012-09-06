@@ -553,10 +553,12 @@ public class Francify extends PApplet {
     public void drawBarGraph(ArrayList<String> countries){
         float distanceBetween = 10;
         int numCountries = countries.size();
+        //evenly divide bars across graph
         float width = graphW / numCountries;
+        width -= distanceBetween;
         for(int i=0; i < numCountries; i++){
             int medalCount = numMedals.get(countries.get(i));
-            float xLoc = graphX + i*distanceBetween + i*width;
+            float xLoc = graphX + i*distanceBetween + i*width + distanceBetween;
             drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0);
         }
     }
