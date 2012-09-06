@@ -248,18 +248,6 @@ public class Francify extends PApplet {
 	            stroke(3);
 	            line(x0,y0,x1,y1);
 	        }
-	        else if (rr0 != null){
-	            float x0 = mapToPlotX(rr0.year, minBound, maxBound);
-	            float y0 = mapToPlotY(rr0.distance);
-	          //show data points
-                ellipse(x0, y0, pointSize, pointSize);
-	        }
-	        else if (rr1 != null){
-	            float x1 = mapToPlotX(rr1.year, minBound, maxBound);
-                float y1 = mapToPlotY(rr1.distance);
-	          //show data points
-	            ellipse(x1, y1, pointSize, pointSize);
-	        }
 	        else{
 //	            System.out.println("Null data at key: " + i);    
 	        }
