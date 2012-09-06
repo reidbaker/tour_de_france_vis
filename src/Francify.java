@@ -18,7 +18,7 @@ public class Francify extends PApplet {
 
 	//Skinning Color Variables
 	int darkColor = 0xFF002E3E;
-	int dataColor0 = 0xFF4c2E88;
+	int dataColor0 = 0xFF4499bb;
 	int dataColor1 = 0xFF88c23c;
 	
 	Slider s;
