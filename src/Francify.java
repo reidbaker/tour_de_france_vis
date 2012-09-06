@@ -203,6 +203,9 @@ public class Francify extends PApplet {
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
+
+		//bar graph code
+		drawBarGraph(10, graphX, graphY, 30);
 	}
 	
 	public void detailsOnDemand(RaceRow row){
@@ -541,6 +544,15 @@ public class Francify extends PApplet {
         float newX = map(x, minBound, maxBound, graphX, graphX + graphWidth);
     return newX;
 	}
+
+    public void drawBarGraph(float amount, float xOffset, float yOffset, float width){
+        int transColor = rgba(dataColor0, 0x88);
+        fill(transColor);
+        noStroke();
+        float height = mapToPlotY(amount, 0, 40, graphY, graphH);
+        float barY = graphH + (yOffset - height);
+        rect(xOffset, barY, width, height, 7);
+    }
 
 	public int rgba(int rgb, int a){
 		return rgb & ((a << 24) | 0xFFFFFF);
