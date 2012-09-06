@@ -41,8 +41,8 @@ public class Francify extends PApplet {
 		size(1000, 600);
 		graphX = 100;
 		graphY = 50;
-		graphW = 800;
-		graphH = 400;
+		graphW = getWidth() - 200;
+		graphH = getHeight() - 200;
 		
 		frameRate(30);
 		currentDisplayed = PART_ONE;
@@ -63,7 +63,7 @@ public class Francify extends PApplet {
 		maxSpeed = maxDistance = 0.0f;
 		minSYear = Integer.MAX_VALUE;
 		maxSYear = Integer.MIN_VALUE;
-				
+
 		String[] lines = loadStrings("data"+File.separator+"Tour_De_France_Data.csv");
 		for(int i = 1; i < lines.length; i++){
 			String[] parts = lines[i].split(",");
@@ -277,11 +277,11 @@ public class Francify extends PApplet {
 	        if ((rr0 != null) && (rr0.distance > 0)){
 	            float year = mapToPlotX(rr0.year, minBound, maxBound);
 	            if (distanceOrSpeed == DRAW_DISTANCE){
-	                y = mapDistanceToPlotY(rr0.distance);	                
+	                y = mapToPlotY(rr0.distance, minDistance, maxDistance);	                
 	                stroke(rgba(dataColor0, 0x88));
 	            }
 	            else { //(distanceOrSpeed == DRAW_SPEED)
-	                y = mapAvgSpeedToPlotY(rr0.avgSpeed);
+	                y = mapToPlotY(rr0.avgSpeed, minSpeed, maxSpeed);
 	                stroke(rgba(dataColor1, 0x88));
 	            }
 	            curveVertex(year, y);
@@ -294,21 +294,24 @@ public class Francify extends PApplet {
         endShape();
 	}
 	
-	public float mapDistanceToPlotY(float y){
-	    int buffer = (int) ((maxDistance - minDistance) * 0.1);
-	    float newY = map(y, minDistance - buffer, maxDistance + buffer, 450, 50);
-	    return newY;
-	}
-	
-	public float mapToPlotX(float x, float minBound, float maxBound){
-	    float newX = map(x, minBound, maxBound, 50, 750);
-	    return newX;
-	}
-    public float mapAvgSpeedToPlotY(float y){
-        int buffer = (int) ((maxSpeed- minSpeed) * 0.1);
-        float newY = map(y, minSpeed - buffer, maxSpeed + buffer, 450, 50);
+    public float mapToPlotY(float y, float min, float max) {
+        //Maps actual values to locations we want to draw
+        //Uses 10% buffer to make data more readable
+        int buffer = (int) ((max - min) * 0.1);
+        float newY = map(
+                y,
+                min - buffer,
+                max + buffer,
+                graphY + graphH,
+                graphY
+        );
         return newY;
     }
+	
+	public float mapToPlotX(float x, float minBound, float maxBound){
+	    float newX = map(x, minBound, maxBound, graphX, graphX + graphW);
+	    return newX;
+	}
 
 	public int rgba(int rgb, int a){
 		return rgb & ((a << 24) | 0xFFFFFF);
