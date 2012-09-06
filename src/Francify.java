@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
 import controlP5.*;
@@ -224,6 +225,13 @@ public class Francify extends PApplet {
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
+
+		//bar graph code
+		ArrayList<String> countries = new ArrayList<String>();
+		countries.add("France");
+		countries.add("Germany");
+		countries.add("USA");
+		drawBarGraph(countries);
 	}
 	
 	public void detailsOnDemand(RaceRow row){
@@ -516,6 +524,17 @@ public class Francify extends PApplet {
 	}
 
 	public void drawAxes() {
+//	     ,  /\  .
+//	    //`-||-'\\
+//	   (| -=||=- |)
+//	    \\,-||-.//
+//	     `  ||  '
+//	        ||
+//	        ||
+//	        ||
+//	        ||
+//	        ||
+//	        ()
 		// Draw Axes Lines
 		stroke(darkColor);
 		strokeWeight(3);
@@ -654,6 +673,48 @@ public class Francify extends PApplet {
         float newX = map(x, minBound, maxBound, graphX, graphX + graphWidth);
     return newX;
 	}
+
+    public void drawBarGraph(ArrayList<String> countries){
+        float distanceBetween = 10;
+        int numCountries = countries.size();
+        //evenly divide bars across graph
+        float width = graphW / numCountries;
+        width -= distanceBetween;
+        for(int i=0; i < numCountries; i++){
+            int medalCount = numMedals.get(countries.get(i));
+            float xLoc = graphX + i*distanceBetween + i*width + distanceBetween;
+            drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0);
+        }
+    }
+
+    public void drawBar(boolean striped, float amount, float xOffset,
+            float yOffset, float width, float graphH, int color) {
+
+        float height = mapToPlotY(amount, 0, 40, yOffset, graphH);
+        float barY = graphH + (yOffset - height);
+
+        if (striped) {
+            // pattern in bar graph
+            int lineWeight = 3;
+            strokeWeight(lineWeight);
+            stroke(rgba(color, 0x55));
+            int patternHeight = 10;
+            float lineWidth = width - lineWeight * 2;
+            float startPatternY = yOffset + graphH - patternHeight - lineWeight + 1;
+            float lineX = xOffset + lineWeight;
+
+            for (float i = startPatternY; i > barY; i -= patternHeight) {
+                line(lineX, i, lineX + lineWidth, i + patternHeight);
+            }
+            fill(rgba(color, 0x44));
+        }
+        else {
+            fill(rgba(color, 0x88));
+        }
+        //Draw bargraph
+        noStroke();
+        rect(xOffset, barY, width, height, 7);
+    }
 
 	public int rgba(int rgb, int a){
 		return rgb & ((a << 24) | 0xFFFFFF);
