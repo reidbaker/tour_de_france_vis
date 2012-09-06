@@ -27,6 +27,7 @@ public class Francify extends PApplet {
 	int darkColor = 0xFF002E3E;
 	int dataColor0 = 0xFF4499bb;
 	int dataColor1 = 0xFF88c23c;
+	int detailsOnDemandColor = 0xFFE7E7E7;
 	
 	Slider s;
 	boolean unpressed;
@@ -37,6 +38,8 @@ public class Francify extends PApplet {
 	int rangeMin, rangeMax, minSYear, maxSYear;
 	int graphX, graphY, graphW, graphH;
 	int currentDisplayed;
+	static float detailMaxDistance = 25.0f;
+	float detailsDistance;
 	String sliderLabel, title;
 	
 	float minSpeed, maxSpeed, minDistance, maxDistance;
@@ -49,8 +52,8 @@ public class Francify extends PApplet {
 	    size(1000, 600);
 		graphX = 100;
 		graphY = 50;
-		graphW = getWidth() - 200;
-		graphH = getHeight() - 200;
+		graphW = width - 200;
+		graphH = height - 200;
 		
 		frameRate(30);
 		currentDisplayed = PART_ONE;
@@ -127,12 +130,11 @@ public class Francify extends PApplet {
 			data.put(rr.year, rr);
 		}
 		
-		s = new Slider(graphX, graphY + graphH + 50, graphW, 50);
 		int[] vals = new int[maxSYear - minSYear];
 		for(int i = minSYear; i < maxSYear; i++){
 			vals[i-minSYear] = i;
 		}
-		s.setValues(vals);
+		s = new Slider(graphX, graphY + graphH + 50, graphW, 50, vals);
 		s.setDrawInterval(10);
 		sliderLabel = "Years";
 		title = "Tour de France, 1903 - 2009";
@@ -183,16 +185,115 @@ public class Francify extends PApplet {
 		drawAxes();
 		s.drawSlider();
 		handleInput();
-		try{
-		    if (enableDistance) drawData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
-		    if (enableSpeed) drawData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
-		} catch(ArrayIndexOutOfBoundsException ioe){
-			System.err.println("Tried to draw before setup completed");
-			System.exit(-1);
+        detailsDistance = Float.MAX_VALUE;
+        RaceRow detailRow = null;
+        if (enableDistance) {
+            detailRow = drawData(DRAW_DISTANCE, s.getLeftBound(),
+                    s.getRightBound());
+        }
+        if (enableSpeed) {
+            RaceRow speedRow = drawData(DRAW_SPEED, s.getLeftBound(),s.getRightBound());
+            if (speedRow != null) {
+                detailRow = speedRow;
+            }
+        }
+		if (detailRow != null) {
+			detailsOnDemand(detailRow);
 		}
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
+	}
+	
+	public void detailsOnDemand(RaceRow row){
+		if(mouseX < graphX + graphW/2){ // Mouse on left half of graph
+			detailsOnDemand(row, graphX + graphW/2 + 10, graphY + 10, graphW/2-20, graphH-20, 20);
+		} else {
+			detailsOnDemand(row, graphX + 10, graphY + 10, graphW/2-20, graphH-20, 20);
+		}
+	}
+	
+	public void detailsOnDemand(RaceRow row, int x, int y, int w, int h, int r){
+		int textSize = 18;
+		fill(detailsOnDemandColor);
+		noStroke();
+		//Draw rounded rectangle
+		rect(x+r,y+r,w-2*r,h-2*r);
+		rect(x,y+r,r,h-2*r);
+		rect(x+r,y,w-2*r,r);
+		rect(x+w-r,y+r,r,h-2*r);
+		rect(x+r,y+h-r,w-2*r,r);
+		
+		int d = 2*r;
+		stroke(darkColor);
+		arc(x+r,y+r,d,d,PI,3*PI/2);
+		arc(x+w-r,y+r,d,d,3*PI/2, 2*PI);
+		arc(x+w-r,y+h-r,d,d,0,PI/2);
+		arc(x+r,y+h-r,d,d,PI/2,PI);
+		line(x,y+r,x,y+h-r);
+		line(x+r,y,x+w-r,y);
+		line(x+r,y+h,x+w-r,y+h);
+		line(x+w,y+r,x+w,y+h-r);
+		
+		fill(darkColor);
+		textFont(largerFont);
+		textSize(textSize);
+		textAlign(LEFT);
+		int ty = y + r/2 + textSize;
+		int tx = x + r;
+		text("Year: " + row.year, tx, ty);
+		ty += textSize;
+		text("Average Speed: " + row.avgSpeed + " mph", tx, ty);
+		ty += textSize;
+		text("Distance: " + row.distance + " km", tx, ty);
+		ty += textSize;
+		text("# Stages: " + row.numStages, tx, ty);
+		ty += textSize*2;
+		
+		text("Winner: ", tx, ty);
+		tx += r;
+		ty += textSize;
+		text("Rider: " + row.firstPlaceRider, tx, ty);
+		ty += textSize;
+		text("Country: " + row.firstPlaceCountry, tx, ty);
+		ty += textSize;
+		text("Team: " + row.firstPlaceTeam, tx, ty);
+		ty += textSize*2;
+		tx -= r;
+		
+		text("Second Place: ", tx, ty);
+		tx += r;
+		ty += textSize;
+		text("Rider: " + row.secondPlaceRider, tx, ty);
+		ty += textSize;
+		text("Country: " + row.secondPlaceCountry, tx, ty);
+		ty += textSize;
+		text("Team: " + row.secondPlaceTeam, tx, ty);
+		ty += textSize*2;
+		tx -= r;
+
+		text("Third Place: ", tx, ty);
+		tx += r;
+		ty += textSize;
+		text("Rider: " + row.thirdPlaceRider, tx, ty);
+		ty += textSize;
+		text("Country: " + row.thirdPlaceCountry, tx, ty);
+		ty += textSize;
+		text("Team: " + row.thirdPlaceTeam, tx, ty);
+		ty += textSize*2;
+		tx -= r;
+		
+		// Hilight the selected data points
+		noFill();
+		stroke(darkColor);
+		strokeWeight(4);
+		float year = mapToPlotX(row.year, s.getLeftBound(), s.getRightBound(), graphX, graphW);     
+        float distY = mapToPlotY(row.distance, minDistance, maxDistance,
+                    graphY, graphH);
+        float speedY = mapToPlotY(row.avgSpeed, minSpeed, maxSpeed,
+                    graphY, graphH);
+        ellipse(year,distY,10,10);
+        ellipse(year,speedY,10,10);
 	}
 	
 	public void updateCursor(){
@@ -280,7 +381,7 @@ public class Francify extends PApplet {
 	public void toggleView(){
 		// FIXME: Finish this method
 		if(currentDisplayed == PART_ONE){
-			s = new Slider(50,700,500,150);
+			s = new Slider(50,700,500,150, null);
 			Set<Integer> keys = data.keySet();
 			int min = Integer.MAX_VALUE, max = 0;
 			for(int i : keys){
@@ -290,7 +391,7 @@ public class Francify extends PApplet {
 					max = i;
 			}
 		} else {
-			s = new Slider(50,700,500,150);
+			s = new Slider(50,700,500,150, null);
 		}
 		currentDisplayed = (currentDisplayed + 1) % 2;
 	}
@@ -343,7 +444,7 @@ public class Francify extends PApplet {
 		textAlign(CENTER);
 	}
 
-    public void drawData(boolean distanceOrSpeed, int minBound, int maxBound,
+    public RaceRow drawData(boolean distanceOrSpeed, int minBound, int maxBound,
             int strokeWidth, float graphX, float graphY, float graphWidth,
             float graphHeight) {
         // Set colors and draw lines.
@@ -351,6 +452,8 @@ public class Francify extends PApplet {
         beginShape();
         strokeWeight(strokeWidth);
 
+        RaceRow toReturn = null;
+        
         //Get and draw data
         float y = 0, lastX = 0; 
         // Weather it is actively drawing or not. Prevents drawing all
@@ -379,6 +482,13 @@ public class Francify extends PApplet {
                     curveVertex(year, y);
                 }
                 curveVertex(year, y);
+                
+                float dist = dist(mouseX, mouseY, year, y);
+                if(dist < detailsDistance && dist < detailMaxDistance){
+                	toReturn = rr;
+                	detailsDistance = dist;
+                }
+                
                 lastX = year;
             }
             else{
@@ -391,10 +501,12 @@ public class Francify extends PApplet {
             }
         }
         endShape();
+        
+        return toReturn;
     }
 
-    public void drawData(boolean distanceOrSpeed, int minBound, int maxBound) {
-        drawData(distanceOrSpeed, minBound, maxBound, 3, graphX, graphY,
+    public RaceRow drawData(boolean distanceOrSpeed, int minBound, int maxBound) {
+        return drawData(distanceOrSpeed, minBound, maxBound, 3, graphX, graphY,
                 graphW, graphH);
     }
 	
@@ -444,7 +556,7 @@ public class Francify extends PApplet {
 		public static final int OUTSIDE = 0, INSIDE = 1, LEFTHANDLE = 2,
 				RIGHTHANDLE = 3;
 
-		public Slider(int x, int y, int w, int h) {
+		public Slider(int x, int y, int w, int h, int[] values) {
 			this.left = this.x = x;
 			this.y = y;
 			this.w = w;
@@ -455,16 +567,13 @@ public class Francify extends PApplet {
 			snappedLeft = goalLeft;
 			snappedRight = goalRight;
 			drawInterval = 1;
+			this.values = values;
+			rangeMin = values[0];
+			rangeMax = values[values.length-1];
 		}
 		
 		public void setDrawInterval(int drawInterval){
 			this.drawInterval = drawInterval;
-		}
-
-		public void setValues(int[] values) {
-			this.values = values;
-			rangeMin = values[0];
-			rangeMax = values[values.length-1];
 		}
 
 		public void drawSlider() {
