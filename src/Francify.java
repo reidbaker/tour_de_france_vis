@@ -1,6 +1,7 @@
 import java.io.File;
 import java.util.Set;
 import java.util.TreeMap;
+import controlP5.*;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -11,7 +12,12 @@ public class Francify extends PApplet {
 	public static final int PART_ONE = 0, PART_TWO = 1;
 	public static final boolean DRAW_DISTANCE = true;
 	public static final boolean DRAW_SPEED= false;
-	
+
+	public ControlP5 cp5;
+	public CheckBox checkbox;
+	public boolean enableDistance = true;
+	public boolean enableSpeed = true;
+
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
 	}
@@ -42,7 +48,8 @@ public class Francify extends PApplet {
 	TreeMap<String, Integer> numMedals;
 	
 	public void setup() {
-		size(1000, 600);
+	    smooth();
+	    size(1000, 600);
 		graphX = 100;
 		graphY = 50;
 		graphW = width - 200;
@@ -131,8 +138,46 @@ public class Francify extends PApplet {
 		s.setDrawInterval(10);
 		sliderLabel = "Years";
 		title = "Tour de France, 1903 - 2009";
+
+		//checkboxes
+		cp5 = new ControlP5(this);
+		checkbox = cp5.addCheckBox("checkBox")
+		        .setPosition(graphW, graphY/2)
+		        .setColorForeground(dataColor0)
+		        .setColorBackground(backgroundColor)
+		        .setColorActive(dataColor0)
+		        .setColorLabel(color(255))
+		        .setSize(20, 20)
+		        .setItemsPerRow(2)
+		        .setSpacingColumn(45)
+		        .setSpacingRow(20)
+		        .addItem("Distance", 1)
+		        .addItem("Average Speed", 1)
+		        ;
+		   checkbox.toggle("Distance");
+		   checkbox.toggle("Average Speed");
 	}
 
+    public void controlEvent(ControlEvent theEvent) {
+        if (theEvent.isFrom(checkbox)) {
+            int distanceChecked = (int) checkbox.getArrayValue()[0];
+            if (distanceChecked == 1) {
+                enableDistance = true;
+            }
+            else{
+                enableDistance = false;
+            }
+            
+            int speedChecked = (int) checkbox.getArrayValue()[1];
+            if (speedChecked == 1) {
+                enableSpeed= true;
+            }
+            else{
+                enableSpeed = false;
+            }
+        }
+    }
+	
 	public void draw() {
 		// Handle data drawing
 
@@ -140,14 +185,18 @@ public class Francify extends PApplet {
 		drawAxes();
 		s.drawSlider();
 		handleInput();
-		detailsDistance = Float.MAX_VALUE;
-		RaceRow detailRow = drawData(DRAW_DISTANCE, s.getLeftBound(),
-				s.getRightBound());
-		RaceRow speedRow = drawData(DRAW_SPEED, s.getLeftBound(),
-				s.getRightBound());
-		if (speedRow != null) {
-			detailRow = speedRow;
-		}
+        detailsDistance = Float.MAX_VALUE;
+        RaceRow detailRow = null;
+        if (enableDistance) {
+            detailRow = drawData(DRAW_DISTANCE, s.getLeftBound(),
+                    s.getRightBound());
+        }
+        if (enableSpeed) {
+            RaceRow speedRow = drawData(DRAW_SPEED, s.getLeftBound(),s.getRightBound());
+            if (speedRow != null) {
+                detailRow = speedRow;
+            }
+        }
 		if (detailRow != null) {
 			detailsOnDemand(detailRow);
 		}
