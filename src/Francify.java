@@ -149,9 +149,11 @@ public class Francify extends PApplet {
 		        .setItemsPerRow(2)
 		        .setSpacingColumn(45)
 		        .setSpacingRow(20)
-		        .addItem("Distance", 0)
-		        .addItem("Average Speed", 0)
+		        .addItem("Distance", 1)
+		        .addItem("Average Speed", 1)
 		        ;
+		   checkbox.toggle("Distance");
+		   checkbox.toggle("Average Speed");
 	}
 
     public void controlEvent(ControlEvent theEvent) {
