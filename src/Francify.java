@@ -104,9 +104,6 @@ public class Francify extends PApplet {
 			
 			data.put(rr.year, rr);
 		}
-		for(Integer i : data.keySet()){
-			System.out.println(i + " - " + data.get(i).firstPlaceRider);
-		}
 		
 		s = new Slider(50, 500, 700, 50);
 		int[] vals = new int[maxSYear - minSYear];
@@ -114,6 +111,7 @@ public class Francify extends PApplet {
 			vals[i-minSYear] = i;
 		}
 		s.setValues(vals);
+		s.setDrawInterval(10);
 	}
 
 	public void draw() {
@@ -267,10 +265,12 @@ public class Francify extends PApplet {
 
 	private class Slider {
 		int x, y, w, h;
-		int left, right;
+		float left, right;
 		int goalLeft, goalRight;
 		int snappedLeft, snappedRight;
 
+		int drawInterval;
+		
 		int[] values;
 
 		public static final int OUTSIDE = 0, INSIDE = 1, LEFTHANDLE = 2,
@@ -282,10 +282,15 @@ public class Francify extends PApplet {
 			this.w = w;
 			this.h = h;
 			this.right = w + x;
-			goalLeft = left;
-			goalRight = right;
+			goalLeft = (int)(left + 0.5f);
+			goalRight = (int)(right + 0.5f);
 			snappedLeft = goalLeft;
 			snappedRight = goalRight;
+			drawInterval = 1;
+		}
+		
+		public void setDrawInterval(int drawInterval){
+			this.drawInterval = drawInterval;
 		}
 
 		public void setValues(int[] values) {
@@ -295,14 +300,34 @@ public class Francify extends PApplet {
 		}
 
 		public void drawSlider() {
-			strokeWeight(1);
+			//Fill background
+			fill(255,255,255);
+			noStroke();
+			rect(x,y,w,h);
 			
 			// Draw underlying data
 			fill(0,0,0);
+			strokeWeight(1);
+			stroke(0);
 			textFont(myFont);
-			for(int i = 0; i < values.length; i++){
-				int xpos = x + (i) * w / (values.length) + w / (2*values.length);
-				text(values[i],xpos - (int)(textWidth(""+values[i])+0.5)/2, y+h/2 + fontSize/2);
+			line(x, y+h, x+w, y+h);
+			for (int i = 0; i < values.length; i++) {
+				int xpos = x + (i) * w / (values.length) + w
+						/ (2 * values.length);
+				if (values[i] % drawInterval == 0) {
+					text(values[i], xpos
+							- (int) (textWidth("" + values[i]) + 0.5) / 2, y
+							+ h + fontSize);
+				}
+				
+				//Draw ruler ticks
+				if(values[i] % 100 == 0){
+					line(xpos, y+h, xpos, y+h - 15);
+				} else if (values[i] % 10 == 0){
+					line(xpos, y+h, xpos, y+h - 10);
+				} else {
+					line(xpos, y+h, xpos, y+h - 5);
+				}
 			}
 
 			// Draw main bar
@@ -318,7 +343,7 @@ public class Francify extends PApplet {
 			fill(100, 100, 255, 127);
 			arc(left, y + 10, 20, 20, PI, 3 * PI / 2);
 			arc(left, y + h - 10, 20, 20, PI / 2, PI);
-			rect(left - 10, y + 10, 10, h - 20);
+			rect(left + 0.5f - 10, y + 10, 10, h - 20);
 
 			fill(100, 100, 255);
 			ellipse(left - 5, y + (h / 2) - 5, 4, 4);
@@ -330,7 +355,7 @@ public class Francify extends PApplet {
 			fill(100, 100, 255, 127);
 			arc(right, y + 10, 20, 20, 3 * PI / 2, 2 * PI);
 			arc(right, y + h - 10, 20, 20, 0, PI / 2);
-			rect(right, y + 10, 10, h - 20);
+			rect(right + 0.5f, y + 10, 10, h - 20);
 
 			fill(100, 100, 255);
 			ellipse(right + 5, y + (h / 2) - 5, 4, 4);
@@ -388,24 +413,28 @@ public class Francify extends PApplet {
 			float ratioL = leftX / (float)w;
 			int index = (int)(ratioL * values.length + 0.5);
 			snappedLeft = x + w * index / values.length;
+			if(index == 0)
+				snappedLeft = x;
 			rangeMin = values[index];
 			
 			int rightX = goalRight - x;
 			float ratioR = rightX / (float)w;
 			index = (int)(ratioR * values.length + 0.5);
+			if(index == values.length)
+				snappedRight = x+w;
 			snappedRight = x + w * index / values.length;
 			rangeMax = values[index-1];
 		}
 		
 		public int getLeftBound(){
-			int leftX = left - x;
+			int leftX = (int)(left + 0.5) - x;
 			float ratioL = leftX / (float)w;
 			int index = (int)(ratioL * values.length + 0.5);
 			return values[index];
 		}
 		
 		public int getRightBound(){
-			int rightX = right - x;
+			int rightX = (int)(right + 0.5) - x;
 			float ratioR = rightX / (float)w;
 			int index = (int)(ratioR * values.length + 0.5);
 			return values[index-1];
