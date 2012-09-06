@@ -268,6 +268,22 @@ public class Francify extends PApplet {
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
+		
+		updateSize();
+	}
+	
+	public void updateSize(){
+		if(graphW != width - 200 || graphH != height - 200){
+			graphW = width - 200;
+			graphH = height - 200;
+			sOne.y = graphY + graphH + 50;
+			sTwo.y = graphY + graphH + 50;
+			sOne.changeWidthTo(graphW);
+			sTwo.changeWidthTo(graphW);
+			lineGraph.setPosition(graphX + graphW + 10, lineGraph.getPosition().y);
+			lineGraph2.setPosition(graphX + graphW + 10, lineGraph2.getPosition().y);
+			barGraph.setPosition(graphX + graphW + 10, barGraph.getPosition().y);
+		}
 	}
 	
 	public void detailsOnDemand(RaceRow row){
@@ -281,24 +297,12 @@ public class Francify extends PApplet {
 	public void detailsOnDemand(RaceRow row, int x, int y, int w, int h, int r){
 		int textSize = 18;
 		fill(detailsOnDemandColor);
+
+		fill(detailsOnDemandColor);
 		noStroke();
-		//Draw rounded rectangle
-		rect(x+r,y+r,w-2*r,h-2*r);
-		rect(x,y+r,r,h-2*r);
-		rect(x+r,y,w-2*r,r);
-		rect(x+w-r,y+r,r,h-2*r);
-		rect(x+r,y+h-r,w-2*r,r);
 		
-		int d = 2*r;
 		stroke(darkColor);
-		arc(x+r,y+r,d,d,PI,3*PI/2);
-		arc(x+w-r,y+r,d,d,3*PI/2, 2*PI);
-		arc(x+w-r,y+h-r,d,d,0,PI/2);
-		arc(x+r,y+h-r,d,d,PI/2,PI);
-		line(x,y+r,x,y+h-r);
-		line(x+r,y,x+w-r,y);
-		line(x+r,y+h,x+w-r,y+h);
-		line(x+w,y+r,x+w,y+h-r);
+		rect(x,y,w,h,r);
 		
 		fill(darkColor);
 		textFont(largerFont);
@@ -408,7 +412,7 @@ public class Francify extends PApplet {
 			textAlign(RIGHT);
 			text(range, graphX + graphW, rangeY);
 			textAlign(CENTER);
-			text(sliderLabel, getWidth()/2, 590);
+			text(sliderLabel, getWidth()/2, height - 10);
 		}
 		} else {
 			//PART TWO
@@ -420,10 +424,10 @@ public class Francify extends PApplet {
 			textAlign(CENTER);
 			if( sCurrent.getLeftBound() != sCurrent.getRightBound()){
 			text(sliderLabel + " : " + sCurrent.getLeftBound() + " - "
-					+ sCurrent.getRightBound(), getWidth() / 2, 590);
+					+ sCurrent.getRightBound(), getWidth() / 2, height - 10);
 			} else {
 				text(sliderLabel + " : " + sCurrent.getLeftBound(),
-						getWidth() / 2, 590);
+						getWidth() / 2, height - 10);
 			}
 		}
 	}
@@ -630,7 +634,14 @@ public class Francify extends PApplet {
 		popMatrix();
 		textAlign(CENTER);
 		} else {
-			// TODO: Draw Axes Labels for Part 2
+			textFont(largerFont);
+			textAlign(CENTER);
+			fill(darkColor);
+			pushMatrix();
+			translate(65,graphY+graphH/2);
+			rotate(-PI/2);
+			text("# Gold Medals Won", 0, 0);
+			popMatrix();
 		}
 	}
 
@@ -869,6 +880,18 @@ public class Francify extends PApplet {
 			rangeMax = values[values.length-1];
 		}
 		
+		public void changeWidthTo(int newWidth) {
+			//Updates the slider width to a new value;
+			float ratioR = (right-x)/(float)w, ratioL = (left-x)/(float)w;
+			float ratioGR = (goalRight-x)/(float)w, ratioGL = (goalLeft-x)/(float)w;
+			w = newWidth;
+			right = x + (int)(ratioR * w + 0.5);
+			left = x + (int)(ratioL * w + 0.5);
+			goalRight = x + (int)(ratioGR * w + 0.5);
+			goalLeft = x + (int)(ratioGL * w + 0.5);
+			snapGoals();
+		}
+
 		public void setDrawInterval(int drawInterval){
 			this.drawInterval = drawInterval;
 		}
@@ -1019,7 +1042,7 @@ public class Francify extends PApplet {
 			if(index == values.length)
 				snappedRight = x+w;
 			snappedRight = x + w * index / values.length;
-			rangeMax = values[index-1];
+			rangeMax = values[index - 1];
 		}
 		
 		public int getLeftBound(){
