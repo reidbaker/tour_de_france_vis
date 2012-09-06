@@ -15,6 +15,8 @@ public class Francify extends PApplet {
 
 	public ControlP5 cp5;
 	public CheckBox checkbox;
+	public boolean enableDistance = true;
+	public boolean enableSpeed = true;
 
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
@@ -138,37 +140,39 @@ public class Francify extends PApplet {
 		//checkboxes
 		cp5 = new ControlP5(this);
 		checkbox = cp5.addCheckBox("checkBox")
-		        .setPosition(100, 200)
-		        .setColorForeground(color(120))
-		        .setColorActive(color(255))
+		        .setPosition(graphW, graphY/2)
+		        .setColorForeground(dataColor0)
+		        .setColorBackground(backgroundColor)
+		        .setColorActive(dataColor0)
 		        .setColorLabel(color(255))
-		        .setSize(40, 40)
-		        .setItemsPerRow(3)
-		        .setSpacingColumn(30)
+		        .setSize(20, 20)
+		        .setItemsPerRow(2)
+		        .setSpacingColumn(45)
 		        .setSpacingRow(20)
-		        .addItem("0", 0)
-		        .addItem("50", 50)
+		        .addItem("Distance", 0)
+		        .addItem("Average Speed", 0)
 		        ;
 	}
 
-//	public void controlEvent(ControlEvent theEvent) {
-//	    if (theEvent.isFrom(checkbox)) {
-//	      myColorBackground = 0;
-//	      print("got an event from "+checkbox.getName()+"\t\n");
-//	      // checkbox uses arrayValue to store the state of 
-//	      // individual checkbox-items. usage:
-//	      println(checkbox.getArrayValue());
-//	      int col = 0;
-//	      for (int i=0;i<checkbox.getArrayValue().length;i++) {
-//	        int n = (int)checkbox.getArrayValue()[i];
-//	        print(n);
-//	        if(n==1) {
-//	          myColorBackground += checkbox.getItem(i).internalValue();
-//	        }
-//	      }
-//	      println();    
-//	    }
-//	}
+    public void controlEvent(ControlEvent theEvent) {
+        if (theEvent.isFrom(checkbox)) {
+            int distanceChecked = (int) checkbox.getArrayValue()[0];
+            if (distanceChecked == 1) {
+                enableDistance = true;
+            }
+            else{
+                enableDistance = false;
+            }
+            
+            int speedChecked = (int) checkbox.getArrayValue()[1];
+            if (speedChecked == 1) {
+                enableSpeed= true;
+            }
+            else{
+                enableSpeed = false;
+            }
+        }
+    }
 	
 	public void draw() {
 		// Handle data drawing
@@ -178,8 +182,8 @@ public class Francify extends PApplet {
 		s.drawSlider();
 		handleInput();
 		try{
-		    drawData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
-		    drawData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
+		    if (enableDistance) drawData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
+		    if (enableSpeed) drawData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
 		} catch(ArrayIndexOutOfBoundsException ioe){
 			System.err.println("Tried to draw before setup completed");
 			System.exit(-1);
