@@ -205,7 +205,7 @@ public class Francify extends PApplet {
 			updateCursor();
 
 		//bar graph code
-		drawBarGraph(10, graphX, graphY, 30);
+		drawBarGraph(true, 10, graphX, graphY, 30);
 	}
 	
 	public void detailsOnDemand(RaceRow row){
@@ -545,12 +545,30 @@ public class Francify extends PApplet {
     return newX;
 	}
 
-    public void drawBarGraph(float amount, float xOffset, float yOffset, float width){
-        int transColor = rgba(dataColor0, 0x88);
-        fill(transColor);
-        noStroke();
+    public void drawBarGraph(boolean striped, float amount, float xOffset, float yOffset, float width){
         float height = mapToPlotY(amount, 0, 40, graphY, graphH);
         float barY = graphH + (yOffset - height);
+
+        if (striped) {
+            // pattern in bar graph
+            int lineWeight = 3;
+            strokeWeight(lineWeight);
+            stroke(rgba(dataColor0, 0x55));
+            int patternHeight = 10;
+            float lineWidth = width - lineWeight * 2;
+            float startPatternY = yOffset + graphH - patternHeight - lineWeight + 1;
+            float lineX = xOffset + lineWeight;
+
+            for (float i = startPatternY; i > barY; i -= patternHeight) {
+                line(lineX, i, lineX + lineWidth, i + patternHeight);
+            }
+            fill(rgba(dataColor0, 0x44));
+        }
+        else {
+            fill(rgba(dataColor0, 0x88));
+        }
+        //Draw bargraph
+        noStroke();
         rect(xOffset, barY, width, height, 7);
     }
 
