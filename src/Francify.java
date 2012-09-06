@@ -24,6 +24,7 @@ public class Francify extends PApplet {
 	PFont myFont;
 	PFont largerFont;
 	int rangeMin, rangeMax, minSYear, maxSYear;
+	int graphX, graphY, graphW, graphH;
 	int currentDisplayed;
 	String sliderLabel, title;
 	
@@ -33,7 +34,12 @@ public class Francify extends PApplet {
 	TreeMap<String, Integer> numMedals;
 	
 	public void setup() {
-		size(800, 600);
+		size(1000, 600);
+		graphX = 100;
+		graphY = 50;
+		graphW = 800;
+		graphH = 400;
+		
 		frameRate(30);
 		currentDisplayed = PART_ONE;
 		
@@ -109,7 +115,7 @@ public class Francify extends PApplet {
 			data.put(rr.year, rr);
 		}
 		
-		s = new Slider(50, 500, 700, 50);
+		s = new Slider(graphX, graphY + graphH + 50, graphW, 50);
 		int[] vals = new int[maxSYear - minSYear];
 		for(int i = minSYear; i < maxSYear; i++){
 			vals[i-minSYear] = i;
@@ -157,19 +163,19 @@ public class Francify extends PApplet {
 			String range = ""+rangeMin;
 			int rangeWidth = (int)(textWidth(range) + 0.5);
 			int rangeX = getWidth()/2 - rangeWidth/2;
-			int rangeY = 475;
+			int rangeY = graphY + graphH + 25;
 			text(range, rangeX, rangeY);
 		} else {
 			String range = ""+rangeMin;
 			int rangeWidth = (int)(textWidth(range) + 0.5);
-			int rangeX = 50;
-			int rangeY = 475;
+			int rangeX = graphX;
+			int rangeY = graphY + graphH + 25;
 			text(range, rangeX, rangeY);
 			
 			range = ""+rangeMax;
 			rangeWidth = (int)(textWidth(range) + 0.5);
-			rangeX = 750 - rangeWidth;
-			rangeY = 475;
+			rangeX = graphX + graphW - rangeWidth;
+			rangeY = graphY + graphH + 25;
 			text(range, rangeX, rangeY);
 		}
 		int width = (int)(textWidth(sliderLabel) + 0.5);
@@ -243,9 +249,14 @@ public class Francify extends PApplet {
 		// Draw Axes Lines
 		stroke(darkColor);
 		strokeWeight(3);
-		line(50,50,50,450);
-		line(50,450,750,450);
-
+		strokeJoin(BEVEL);
+		strokeCap(SQUARE);
+		noFill();
+		beginShape();
+		vertex(graphX, graphY);
+		vertex(graphX, graphY + graphH);
+		vertex(graphX + graphW, graphY + graphH);
+		endShape();
 		// Draw Labels
 	}
     public void drawAvgSpeedData(int minBound, int maxBound) {
