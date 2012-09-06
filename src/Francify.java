@@ -1,6 +1,5 @@
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
 import controlP5.*;
@@ -20,7 +19,7 @@ public class Francify extends PApplet {
     public CheckBox barGraph;
     public boolean enableDistance = true;
 	public boolean enableSpeed = true;
-    public boolean sortAssending = true;
+    public boolean sortAscending = true;
 
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
@@ -180,10 +179,10 @@ public class Francify extends PApplet {
 
         // checkboxes for bargraph
         barGraph= cp5.addCheckBox("BarGraph")
-                .setPosition(graphW + 100, graphY)
-                .setColorForeground(dataColor0)
+                .setPosition(graphW + graphX, graphY)
+                .setColorForeground(dataColor1)
                 .setColorBackground(backgroundColor)
-                .setColorActive(dataColor0)
+                .setColorActive(dataColor1)
                 .setColorLabel(darkColor)
                 .setSize(20, 20)
                 .setItemsPerRow(1)
@@ -210,6 +209,15 @@ public class Francify extends PApplet {
             }
             else{
                 enableSpeed = false;
+            }
+        }
+        else { //The event is from BarGraph
+            int ascendingChecked = (int) barGraph.getArrayValue()[0];
+            if (ascendingChecked == 1){
+                sortAscending = true;
+            }
+            else{
+                sortAscending = false;
             }
         }
     }
