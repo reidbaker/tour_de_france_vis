@@ -277,7 +277,7 @@ public class Francify extends PApplet {
         for(int i = minBound; i < maxBound; i++){
             RaceRow rr = data.get(i);
             if ((rr != null) && (rr.distance > 0)){
-                float year = mapToPlotX(rr.year, minBound, maxBound);
+                float year = mapToPlotX(rr.year, minBound, maxBound, graphX, graphWidth);
                 if (distanceOrSpeed == DRAW_DISTANCE){
                     y = mapToPlotY(rr.distance, minDistance, maxDistance,
                             graphY, graphHeight);
@@ -318,9 +318,10 @@ public class Francify extends PApplet {
         return newY;
     }
 	
-	public float mapToPlotX(float x, float minBound, float maxBound){
-	    float newX = map(x, minBound, maxBound, graphX, graphX + graphW);
-	    return newX;
+    public float mapToPlotX(float x, float minBound, float maxBound,
+            float graphX, float graphWidth) {
+        float newX = map(x, minBound, maxBound, graphX, graphX + graphWidth);
+    return newX;
 	}
 
 	public int rgba(int rgb, int a){
