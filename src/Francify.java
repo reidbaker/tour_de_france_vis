@@ -32,7 +32,7 @@ public class Francify extends PApplet {
 	int dataColor1 = 0xFF88c23c;
 	int detailsOnDemandColor = 0xAAE7E7E7;
 	
-	Slider s;
+	Slider sCurrent, sOne, sTwo;
 	boolean unpressed;
 	boolean movingSlider, leftHandle, rightHandle;
 	static int fontSize = 10;
@@ -137,8 +137,23 @@ public class Francify extends PApplet {
 		for(int i = minSYear; i < maxSYear; i++){
 			vals[i-minSYear] = i;
 		}
-		s = new Slider(graphX, graphY + graphH + 50, graphW, 50, vals);
-		s.setDrawInterval(10);
+		sOne = new Slider(graphX, graphY + graphH + 50, graphW, 50, vals);
+		sOne.setDrawInterval(10);
+		
+		int maxMedals = 0;
+		for(String s : numMedals.keySet()){
+			if(numMedals.get(s) > maxMedals){
+				maxMedals = numMedals.get(s);
+			}
+		}
+		int[] medalCounts = new int[maxMedals + 1]; 
+		for(int i = 0; i <= maxMedals; i++){
+			medalCounts[i] = i;
+		}
+		sTwo = new Slider(graphX, graphY + graphH + 50, graphW, 50, medalCounts);
+		sTwo.setDrawInterval(5);
+		
+		sCurrent = sOne;
 		sliderLabel = "Years";
 
 		//checkboxes
@@ -186,17 +201,17 @@ public class Francify extends PApplet {
 		background(backgroundColor);
 		drawAxes();
 		drawTabs();
-		s.drawSlider();
+		sCurrent.drawSlider();
 		handleInput();
 		if(currentDisplayed == PART_ONE){
         detailsDistance = Float.MAX_VALUE;
         RaceRow detailRow = null;
         if (enableDistance) {
-            detailRow = drawData(DRAW_DISTANCE, s.getLeftBound(),
-                    s.getRightBound());
+            detailRow = drawData(DRAW_DISTANCE, sCurrent.getLeftBound(),
+                    sCurrent.getRightBound());
         }
         if (enableSpeed) {
-            RaceRow speedRow = drawData(DRAW_SPEED, s.getLeftBound(),s.getRightBound());
+            RaceRow speedRow = drawData(DRAW_SPEED, sCurrent.getLeftBound(),sCurrent.getRightBound());
             if (speedRow != null) {
                 detailRow = speedRow;
             }
@@ -254,7 +269,7 @@ public class Francify extends PApplet {
 		int tx = x + r;
 		text("Year: " + row.year, tx, ty);
 		ty += textSize;
-		text("Average Speed: " + row.avgSpeed + " mph", tx, ty);
+		text("Average Speed: " + row.avgSpeed + " km/h", tx, ty);
 		ty += textSize;
 		text("Distance: " + row.distance + " km", tx, ty);
 		ty += textSize;
@@ -298,7 +313,7 @@ public class Francify extends PApplet {
 		noFill();
 		stroke(darkColor);
 		strokeWeight(3);
-		float year = mapToPlotX(row.year, s.getLeftBound(), s.getRightBound(), graphX, graphW);     
+		float year = mapToPlotX(row.year, sCurrent.getLeftBound(), sCurrent.getRightBound(), graphX, graphW);     
         float distY = mapToPlotY(row.distance, minDistance, maxDistance,
                     graphY, graphH);
         float speedY = mapToPlotY(row.avgSpeed, minSpeed, maxSpeed,
@@ -308,7 +323,7 @@ public class Francify extends PApplet {
 	}
 	
 	public void updateCursor(){
-		int pos = s.whereIs(mouseX, mouseY);
+		int pos = sCurrent.whereIs(mouseX, mouseY);
 		switch(pos){
 		case Slider.OUTSIDE:
 			cursor(ARROW);
@@ -335,6 +350,7 @@ public class Francify extends PApplet {
 	public void drawRange(){
 		fill(darkColor);
 		textFont(largerFont);
+		if(currentDisplayed == PART_ONE){
 		if(rangeMin == rangeMax){
 			String range = ""+rangeMin;
 			int rangeY = graphY + graphH + 25;
@@ -350,9 +366,20 @@ public class Francify extends PApplet {
 			rangeY = graphY + graphH + 25;
 			textAlign(RIGHT);
 			text(range, graphX + graphW, rangeY);
+			textAlign(CENTER);
+			text(sliderLabel, getWidth()/2, 590);
 		}
-		textAlign(CENTER);
-		text(sliderLabel, getWidth()/2, 590);
+		} else {
+			//PART TWO
+			textAlign(RIGHT);
+			fill(darkColor);
+			text(sCurrent.values[0], graphX - 5, graphY + graphH);
+			text(sCurrent.values[sCurrent.values.length-1], graphX - 5,graphY + 18);
+
+			textAlign(CENTER);
+			text(sliderLabel + " : " + sCurrent.getLeftBound() + " - "
+					+ sCurrent.getRightBound(), getWidth() / 2, 590);
+		}
 	}
 	
 	public void handleInput(){
@@ -362,7 +389,7 @@ public class Francify extends PApplet {
 				// Everything within this block occurs when first clicked
 				// (pressed state toggles on)
 				unpressed = false;
-				int loc = s.whereIs(mouseX, mouseY);
+				int loc = sCurrent.whereIs(mouseX, mouseY);
 				if (loc == Slider.INSIDE)
 					movingSlider = true;
 				else if (loc == Slider.LEFTHANDLE)
@@ -383,13 +410,13 @@ public class Francify extends PApplet {
 				// Everything in this block occurs when the mouse has been
 				// pressed for some period (clicking and dragging, etc.)
 				if(movingSlider){
-					s.dragAll(mouseX, pmouseX);
+					sCurrent.dragAll(mouseX, pmouseX);
 				} else if(leftHandle){
-					s.dragLH(mouseX, pmouseX);
+					sCurrent.dragLH(mouseX, pmouseX);
 				} else if(rightHandle){
-					s.dragRH(mouseX, pmouseX);
+					sCurrent.dragRH(mouseX, pmouseX);
 				}
-				s.snapGoals();
+				sCurrent.snapGoals();
 			}
 		}
 	}
@@ -467,7 +494,7 @@ public class Francify extends PApplet {
 	public void updateAnim(){
 		// Update animation values (simple spring animation)
 	    int speed = 4;
-	    s.updateAnim(speed);
+	    sCurrent.updateAnim(speed);
 	}
 
 	public void mouseReleased() {
@@ -475,17 +502,20 @@ public class Francify extends PApplet {
 		movingSlider = false;
 		leftHandle = false;
 		rightHandle = false;
-		s.updateGoals();
+		sCurrent.updateGoals();
 	}
 	
 	public void toggleView(int toggleTo){
 		if (currentDisplayed != toggleTo) {
-			// FIXME: Recreate the slider bar when toggling
 			currentDisplayed = (currentDisplayed + 1) % 2;
 			if (currentDisplayed == PART_ONE) {
 				checkbox.setVisible(true);
+				sCurrent = sOne;
+				sliderLabel = "Years";
 			} else {
 				checkbox.setVisible(false);
+				sCurrent = sTwo;
+				sliderLabel = "Number of Medals";
 			}
 		}
 	}
@@ -515,8 +545,9 @@ public class Francify extends PApplet {
 		endShape();
 		
 		// Draw Labels
-		if(currentDisplayed == PART_ONE){
 		drawRange();
+		
+		if(currentDisplayed == PART_ONE){
 		
 		textFont(largerFont);
 		textAlign(CENTER);
@@ -526,7 +557,7 @@ public class Francify extends PApplet {
 		rotate(-PI/2);
 		text("Distance (km)", 0, 0);
 		fill(rgba(dataColor1, 0.75f));
-		text("Average Speed (mph)", 0, 40);
+		text("Average Speed (km/h)", 0, 40);
 		popMatrix();
 		
 		textAlign(RIGHT);
