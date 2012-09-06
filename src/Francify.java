@@ -239,12 +239,13 @@ public class Francify extends PApplet {
 	            float x1 = mapToPlotX(rr1.year, minBound, maxBound);
 	            float y1 = mapToPlotY(rr1.distance);
 	          //show data points
-                fill(204, 102, 0);
+                fill(0xFF33B5E5);
                 ellipse(x0,y0, pointSize, pointSize);
                 ellipse(x1,y1, pointSize, pointSize);
 
 	            //Show line
-	            stroke(3);
+                stroke(0xFF002E3E);
+                strokeWeight(1);
 	            line(x0,y0,x1,y1);
 	        }
 	        else{
@@ -255,7 +256,8 @@ public class Francify extends PApplet {
 	}
 	
 	public float mapToPlotY(float y){
-	    float newY = map(y, minDistance, maxDistance, 450, 50);
+	    int buffer = (int) ((maxDistance - minDistance) * 0.1);
+	    float newY = map(y, minDistance - buffer, maxDistance + buffer, 450, 50);
 	    return newY;
 	}
 	
