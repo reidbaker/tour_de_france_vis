@@ -265,10 +265,11 @@ public class Francify extends PApplet {
 	}
 
     public void drawData(boolean distanceOrSpeed, int minBound, int maxBound,
-            int strokeWidth, float graphX, float graphY, float graphWidth, float graphHeight) {
+            int strokeWidth, float graphX, float graphY, float graphWidth,
+            float graphHeight) {
         // Set colors and draw lines.
         noFill();
-        beginShape();
+       beginShape();
         strokeWeight(strokeWidth);
 
         //Get and draw data
@@ -302,8 +303,9 @@ public class Francify extends PApplet {
                 graphW, graphH);
     }
 	
-    public float mapToPlotY(float y, float min, float max, float graphX, float graphY, float graphW, float graphH) {
-        //Maps actual values to locations we want to draw
+    public float mapToPlotY(float y, float min, float max, float graphX,
+            float graphY, float graphW, float graphH) {
+        // Maps actual values to locations we want to draw
         //Uses 10% buffer to make data more readable
         int buffer = (int) ((max - min) * 0.1);
         float newY = map(
