@@ -301,9 +301,20 @@ public class Francify extends PApplet {
 
 		public void drawSlider() {
 			//Fill background
-			fill(255,255,255);
-			noStroke();
-			rect(x,y,w,h);
+//			fill(255,255,255);
+//			noStroke();
+//			rect(x,y,w,h);
+			stroke(127,127,127);
+			strokeWeight(2);
+			noFill();
+			strokeJoin(ROUND);
+			beginShape();
+			vertex(x, y+h);
+			vertex(x, y);
+			vertex(x+w, y);
+			vertex(x+w, y+h);
+			endShape();
+			
 			
 			// Draw underlying data
 			fill(0,0,0);
@@ -333,31 +344,32 @@ public class Francify extends PApplet {
 			// Draw main bar
 			fill(0, 0, 0, 0);
 			for (int i = 0; i < h; i++) {
-				stroke(100, 100, 255, i * 127 / h);
+//				002E3E
+				stroke(0x00, 0x2e, 0x3E, i * 127 / h);
 				line(left, y + i, right, y + i);
 			}
 			rect(left, y, right - left, h);
 
 			// Draw left handle
 			stroke(0, 0, 0, 0);
-			fill(100, 100, 255, 127);
+			fill(0x00, 0x2e, 0x3E, 127);
 			arc(left, y + 10, 20, 20, PI, 3 * PI / 2);
 			arc(left, y + h - 10, 20, 20, PI / 2, PI);
 			rect(left + 0.5f - 10, y + 10, 10, h - 20);
 
-			fill(100, 100, 255);
+			fill(0x00, 0x2e, 0x3E);
 			ellipse(left - 5, y + (h / 2) - 5, 4, 4);
 			ellipse(left - 5, y + (h / 2), 4, 4);
 			ellipse(left - 5, y + (h / 2) + 5, 4, 4);
 
 			// Draw right handle
 			stroke(0, 0, 0, 0);
-			fill(100, 100, 255, 127);
+			fill(0x00, 0x2e, 0x3E, 127);
 			arc(right, y + 10, 20, 20, 3 * PI / 2, 2 * PI);
 			arc(right, y + h - 10, 20, 20, 0, PI / 2);
 			rect(right + 0.5f, y + 10, 10, h - 20);
 
-			fill(100, 100, 255);
+			fill(0x00, 0x2e, 0x3E);
 			ellipse(right + 5, y + (h / 2) - 5, 4, 4);
 			ellipse(right + 5, y + (h / 2), 4, 4);
 			ellipse(right + 5, y + (h / 2) + 5, 4, 4);
