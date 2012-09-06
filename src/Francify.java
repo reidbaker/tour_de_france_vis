@@ -1,6 +1,7 @@
 import java.io.File;
 import java.util.Set;
 import java.util.TreeMap;
+import controlP5.*;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -11,12 +12,16 @@ public class Francify extends PApplet {
 	public static final int PART_ONE = 0, PART_TWO = 1;
 	public static final boolean DRAW_DISTANCE = true;
 	public static final boolean DRAW_SPEED= false;
-	
+
+	public ControlP5 cp5;
+	public CheckBox checkbox;
+
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
 	}
 
 	//Skinning Color Variables
+	int backgroundColor = 0xFFCCCCCC;
 	int darkColor = 0xFF002E3E;
 	int dataColor0 = 0xFF4499bb;
 	int dataColor1 = 0xFF88c23c;
@@ -38,7 +43,8 @@ public class Francify extends PApplet {
 	TreeMap<String, Integer> numMedals;
 	
 	public void setup() {
-		size(1000, 600);
+	    smooth();
+	    size(1000, 600);
 		graphX = 100;
 		graphY = 50;
 		graphW = getWidth() - 200;
@@ -128,18 +134,52 @@ public class Francify extends PApplet {
 		s.setDrawInterval(10);
 		sliderLabel = "Years";
 		title = "Tour de France, 1903 - 2009";
+
+		//checkboxes
+		cp5 = new ControlP5(this);
+		checkbox = cp5.addCheckBox("checkBox")
+		        .setPosition(100, 200)
+		        .setColorForeground(color(120))
+		        .setColorActive(color(255))
+		        .setColorLabel(color(255))
+		        .setSize(40, 40)
+		        .setItemsPerRow(3)
+		        .setSpacingColumn(30)
+		        .setSpacingRow(20)
+		        .addItem("0", 0)
+		        .addItem("50", 50)
+		        ;
 	}
 
+//	public void controlEvent(ControlEvent theEvent) {
+//	    if (theEvent.isFrom(checkbox)) {
+//	      myColorBackground = 0;
+//	      print("got an event from "+checkbox.getName()+"\t\n");
+//	      // checkbox uses arrayValue to store the state of 
+//	      // individual checkbox-items. usage:
+//	      println(checkbox.getArrayValue());
+//	      int col = 0;
+//	      for (int i=0;i<checkbox.getArrayValue().length;i++) {
+//	        int n = (int)checkbox.getArrayValue()[i];
+//	        print(n);
+//	        if(n==1) {
+//	          myColorBackground += checkbox.getItem(i).internalValue();
+//	        }
+//	      }
+//	      println();    
+//	    }
+//	}
+	
 	public void draw() {
 		// Handle data drawing
 
-		background(0xcccccc);
+		background(backgroundColor);
 		drawAxes();
 		s.drawSlider();
 		handleInput();
 		try{
-		drawData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
-		drawData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
+		    drawData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
+		    drawData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
 		} catch(ArrayIndexOutOfBoundsException ioe){
 			System.err.println("Tried to draw before setup completed");
 			System.exit(-1);
