@@ -237,14 +237,9 @@ public class Francify extends PApplet {
                 float y0 = mapAvgSpeedToPlotY(rr0.avgSpeed);
                 float x1 = mapToPlotX(rr1.year, minBound, maxBound);
                 float y1 = mapAvgSpeedToPlotY(rr1.avgSpeed);
-              //show data points
-                fill(96, 105, 114);
-                ellipse(x0,y0, pointSize, pointSize);
-                ellipse(x1,y1, pointSize, pointSize);
-
                 //Show line
-                stroke(0xFF002E3E);
-                strokeWeight(1);
+                stroke(0x8888c23c);
+                strokeWeight(3);
                 line(x0,y0,x1,y1);
             }
             else{
@@ -271,13 +266,8 @@ public class Francify extends PApplet {
 	            float x1 = mapToPlotX(rr1.year, minBound, maxBound);
 	            float y1 = mapDistanceToPlotY(rr1.distance);
 	          //show data points
-                fill(0xFF33B5E5);
-                ellipse(x0,y0, pointSize, pointSize);
-                ellipse(x1,y1, pointSize, pointSize);
-
-	            //Show line
-                stroke(0xFF002E3E);
-                strokeWeight(1);
+                stroke(0x8833B5E5);
+                strokeWeight(3);
 	            line(x0,y0,x1,y1);
 	        }
 	        else{
