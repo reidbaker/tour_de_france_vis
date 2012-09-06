@@ -123,13 +123,15 @@ public class Francify extends PApplet {
 			if (parts.length > 18)
 				rr.bestTeam = parts[18];
 			
-			Integer medals = numMedals.get(rr.firstPlaceCountry);
-			if(medals == null){
-				numMedals.put(rr.firstPlaceCountry, 1);
-			} else {
-				numMedals.put(rr.firstPlaceCountry, medals + 1);
+			if (!rr.firstPlaceCountry.equals("(no data)")) {
+				Integer medals = numMedals.get(rr.firstPlaceCountry);
+				if (medals == null) {
+					numMedals.put(rr.firstPlaceCountry, 1);
+				} else {
+					numMedals.put(rr.firstPlaceCountry, medals + 1);
+				}
 			}
-			
+
 			data.put(rr.year, rr);
 		}
 		
