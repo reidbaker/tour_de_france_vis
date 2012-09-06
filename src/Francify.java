@@ -674,6 +674,7 @@ public class Francify extends PApplet {
 	}
 
     public ArrayList<String> filterByMedals(int min, int max){
+        //TODO HELP REID
         Set<String> keys = numMedals.keySet();
         ArrayList<String> filteredC = new ArrayList<String>();
         ArrayList<Integer> filteredM = new ArrayList<Integer>();
