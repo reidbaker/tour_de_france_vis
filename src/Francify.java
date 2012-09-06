@@ -124,7 +124,7 @@ public class Francify extends PApplet {
 		s.drawSlider();
 		drawRange();
 		handleInput();
-		drawData(s.getLeftBound(), s.getRightBound());
+		drawDistanceData(s.getLeftBound(), s.getRightBound());
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
@@ -228,14 +228,39 @@ public class Francify extends PApplet {
 		// Draw Labels
 	}
 
-	public void drawData(int minBound, int maxBound) {
+	public void drawDistanceData(int minBound, int maxBound) {
 		// Set colors and draw lines. Use a thicker stroke if possible
-	    for(int i = minBound; i<= maxBound; i++){
-	        RaceRow rr = data.get(i);
-	        if (rr != null){
-	            float x = mapToPlotX(rr.year, minBound, maxBound);
-	            float y = mapToPlotY(rr.distance);
-	            ellipse(x,y,5,5);
+	    int pointSize = 5;
+	    for(int i = minBound; i < maxBound; i++){
+	        RaceRow rr0 = data.get(i);
+	        RaceRow rr1 = data.get(i+1);
+	        if ((rr0 != null) && (rr1 != null) && (rr0.distance > 0) && (rr1.distance > 0)){
+	            float x0 = mapToPlotX(rr0.year, minBound, maxBound);
+	            float y0 = mapToPlotY(rr0.distance);
+	            float x1 = mapToPlotX(rr1.year, minBound, maxBound);
+	            float y1 = mapToPlotY(rr1.distance);
+	          //show data points
+                fill(204, 102, 0);
+                ellipse(x0,y0, pointSize, pointSize);
+                ellipse(x1,y1, pointSize, pointSize);
+
+	            //Show line
+	            stroke(3);
+	            line(x0,y0,x1,y1);
+	        }
+	        else if (rr0 != null){
+	            float x0 = mapToPlotX(rr0.year, minBound, maxBound);
+	            float y0 = mapToPlotY(rr0.distance);
+	          //show data points
+                fill(204, 102, 0);
+                ellipse(x0, y0, pointSize, pointSize);
+	        }
+	        else if (rr1 != null){
+	            float x1 = mapToPlotX(rr1.year, minBound, maxBound);
+                float y1 = mapToPlotY(rr1.distance);
+	          //show data points
+	            fill(204, 102, 0);
+	            ellipse(x1, y1, pointSize, pointSize);
 	        }
 	        else{
 //	            System.out.println("Null data at key: " + i);    
