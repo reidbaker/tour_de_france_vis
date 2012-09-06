@@ -226,8 +226,8 @@ public class Francify extends PApplet {
 		}
 		} else {
 			//bar graph code
-			ArrayList<String> countries = filterByMedals(sCurrent.values[0],
-					sCurrent.values[sCurrent.values.length - 1]);
+			ArrayList<String> countries = filterByMedals(sCurrent.getLeftBound(),
+					sCurrent.getRightBound());
 			drawBarGraph(countries);
 		}
 		updateAnim();
@@ -515,9 +515,11 @@ public class Francify extends PApplet {
 			if (currentDisplayed == PART_ONE) {
 				checkbox.setVisible(true);
 				sCurrent = sOne;
+//				graphY -= 40;
 				sliderLabel = "Years";
 			} else {
 				checkbox.setVisible(false);
+//				graphY += 40;
 				sCurrent = sTwo;
 				sliderLabel = "Number of Medals";
 			}
@@ -682,7 +684,8 @@ public class Francify extends PApplet {
         }
         ArrayList<String> names = new ArrayList<String>();
         for(SortableCountry sc : toSort){
-        	names.add(sc.name);
+			if (sc.medals >= min && sc.medals <= max)
+				names.add(sc.name);
         }
         return names;
     }
@@ -707,6 +710,7 @@ public class Francify extends PApplet {
         float distanceBetween = 10;
         int numCountries = countries.size();
         //evenly divide bars across graph
+        if(numCountries > 0){
         float width = graphW / numCountries;
         width -= distanceBetween;
         for(int i=0; i < numCountries; i++){
@@ -714,14 +718,16 @@ public class Francify extends PApplet {
             float xLoc = graphX + i*distanceBetween + i*width + distanceBetween;
             drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0, countries.get(i));
         }
+        }
     }
 
     public void drawBar(boolean striped, float amount, float xOffset,
             float yOffset, float width, float graphH, int color, String label) {
 
-        float height = mapToPlotY(amount, 0, 40, yOffset, graphH);
+        float barY = mapToPlotY(amount, 0, 37, yOffset, yOffset+graphH);
+        float height = 10;
         // Point of the top left corner of the bar to be drawn
-        float barY = graphH + (yOffset - height);
+//        float barY = graphH + (yOffset - height);
 
         if (striped) {
             // pattern in bar graph
