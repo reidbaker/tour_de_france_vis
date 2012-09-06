@@ -18,7 +18,7 @@ public class Francify extends PApplet {
 
 	//Skinning Color Variables
 	int darkColor = 0xFF002E3E;
-	int dataColor0 = 0xFF002E3E;
+	int dataColor0 = 0xFF4c2E88;
 	int dataColor1 = 0xFF88c23c;
 	
 	Slider s;
@@ -169,26 +169,22 @@ public class Francify extends PApplet {
 		textFont(largerFont);
 		if(rangeMin == rangeMax){
 			String range = ""+rangeMin;
-			int rangeWidth = (int)(textWidth(range) + 0.5);
-			int rangeX = getWidth()/2 - rangeWidth/2;
 			int rangeY = graphY + graphH + 25;
-			text(range, rangeX, rangeY);
+			textAlign(CENTER);
+			text(range, getWidth()/2, rangeY);
 		} else {
 			String range = ""+rangeMin;
-			int rangeWidth = (int)(textWidth(range) + 0.5);
-			int rangeX = graphX;
 			int rangeY = graphY + graphH + 25;
-			text(range, rangeX, rangeY);
+			textAlign(LEFT);
+			text(range, graphX, rangeY);
 			
 			range = ""+rangeMax;
-			rangeWidth = (int)(textWidth(range) + 0.5);
-			rangeX = graphX + graphW - rangeWidth;
 			rangeY = graphY + graphH + 25;
-			text(range, rangeX, rangeY);
+			textAlign(RIGHT);
+			text(range, graphX + graphW, rangeY);
 		}
-		int width = (int)(textWidth(sliderLabel) + 0.5);
-		text(sliderLabel, getWidth()/2 - width/2, 590);
 		textAlign(CENTER);
+		text(sliderLabel, getWidth()/2, 590);
 		text(title, getWidth()/2, 25);
 	}
 	
@@ -270,15 +266,35 @@ public class Francify extends PApplet {
 		drawRange();
 		
 		textFont(largerFont);
+		textAlign(CENTER);
 		fill(rgba(dataColor0, 0.75f));
 		pushMatrix();
 		translate(40,graphY+graphH/2);
 		rotate(-PI/2);
-		textAlign(CENTER);
 		text("Distance (km)", 0, 0);
 		fill(rgba(dataColor1, 0.75f));
 		text("Average Speed (mph)", 0, 40);
 		popMatrix();
+		
+		textAlign(RIGHT);
+		textFont(myFont);
+		textSize(18);
+		pushMatrix();
+		translate(graphX - 5,graphY + 18);
+		fill(rgba(dataColor0, 0.75f));
+		text(""+maxDistance, 0, 0);
+		fill(rgba(dataColor1, 0.75f));
+		text(""+maxSpeed, 0, 18);
+		popMatrix();
+		
+		pushMatrix();
+		translate(graphX - 5,graphY + graphH - 20);
+		fill(rgba(dataColor0, 0.75f));
+		text(""+maxDistance, 0, 0);
+		fill(rgba(dataColor1, 0.75f));
+		text(""+maxSpeed, 0, 18);
+		popMatrix();
+		textAlign(CENTER);
 	}
 
     public void drawData(boolean distanceOrSpeed, int minBound, int maxBound,
@@ -428,9 +444,8 @@ public class Francify extends PApplet {
 				int xpos = x + (i) * w / (values.length) + w
 						/ (2 * values.length);
 				if (values[i] % drawInterval == 0 || i == 0 || i == values.length-1) {
-					text(values[i], xpos
-							- (int) (textWidth("" + values[i]) + 0.5) / 2, y
-							+ h + fontSize);
+					textAlign(CENTER);
+					text(values[i], xpos, y + h + fontSize);
 				}
 				
 				//Draw ruler ticks
