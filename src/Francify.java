@@ -16,7 +16,7 @@ public class Francify extends PApplet {
 	public static final boolean DRAW_SPEED= false;
 
 	public ControlP5 cp5;
-	public CheckBox checkbox;
+	public CheckBox lineGraph;
 	public boolean enableDistance = true;
 	public boolean enableSpeed = true;
 
@@ -161,7 +161,7 @@ public class Francify extends PApplet {
 
 		//checkboxes
 		cp5 = new ControlP5(this);
-		checkbox = cp5.addCheckBox("checkBox")
+		lineGraph = cp5.addCheckBox("checkBox")
 		        .setPosition(graphW + 100, graphY)
 		        .setColorForeground(dataColor0)
 		        .setColorBackground(backgroundColor)
@@ -174,13 +174,13 @@ public class Francify extends PApplet {
 		        .addItem("Distance", 1)
 		        .addItem("Average Speed", 1)
 		        ;
-		   checkbox.toggle("Distance");
-		   checkbox.toggle("Average Speed");
+		   lineGraph.toggle("Distance");
+		   lineGraph.toggle("Average Speed");
 	}
 
     public void controlEvent(ControlEvent theEvent) {
-        if (theEvent.isFrom(checkbox)) {
-            int distanceChecked = (int) checkbox.getArrayValue()[0];
+        if (theEvent.isFrom(lineGraph)) {
+            int distanceChecked = (int) lineGraph.getArrayValue()[0];
             if (distanceChecked == 1) {
                 enableDistance = true;
             }
@@ -188,7 +188,7 @@ public class Francify extends PApplet {
                 enableDistance = false;
             }
             
-            int speedChecked = (int) checkbox.getArrayValue()[1];
+            int speedChecked = (int) lineGraph.getArrayValue()[1];
             if (speedChecked == 1) {
                 enableSpeed= true;
             }
@@ -511,11 +511,11 @@ public class Francify extends PApplet {
 		if (currentDisplayed != toggleTo) {
 			currentDisplayed = (currentDisplayed + 1) % 2;
 			if (currentDisplayed == PART_ONE) {
-				checkbox.setVisible(true);
+				lineGraph.setVisible(true);
 				sCurrent = sOne;
 				sliderLabel = "Years";
 			} else {
-				checkbox.setVisible(false);
+				lineGraph.setVisible(false);
 				sCurrent = sTwo;
 				sliderLabel = "Number of Medals";
 			}
