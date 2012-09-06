@@ -731,6 +731,7 @@ public class Francify extends PApplet {
     }
 
     public void drawBarGraph(ArrayList<String> countries){
+        ArrayList<String> curCountries = null;
         float distanceBetween = 10;
         int numCountries = countries.size();
         //evenly divide bars across graph
@@ -738,14 +739,17 @@ public class Francify extends PApplet {
             float width = graphW / numCountries;
             width -= distanceBetween;
             if (sortAscending){
-                for(int i=0; i < numCountries; i++){
-                    doBarWork(countries, distanceBetween, width, i);
-                }
+                //Do nothing
+                curCountries = countries;
             }
             else{
+                curCountries = new ArrayList<String>();
                 for(int i=numCountries-1; i >= 0; i--){
-                    doBarWork(countries, distanceBetween, width, i);
+                    curCountries.add(countries.get(i));
                 }
+            }
+            for(int i=0; i < numCountries; i++){
+                doBarWork(curCountries, distanceBetween, width, i);
             }
 
         }
