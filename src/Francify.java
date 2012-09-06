@@ -89,7 +89,7 @@ public class Francify extends PApplet {
 				rr.avgSpeed = Float.parseFloat(parts[17]);
 				if(rr.avgSpeed > maxSpeed)
 					maxSpeed = rr.avgSpeed;
-				if(rr.distance < minSpeed)
+				if(rr.avgSpeed < minSpeed)
 					minSpeed = rr.avgSpeed;
 			}
 			if (parts.length > 18)
@@ -122,7 +122,7 @@ public class Francify extends PApplet {
 		s.drawSlider();
 		drawRange();
 		handleInput();
-		drawDistanceData(s.getLeftBound(), s.getRightBound());
+		drawAvgSpeedData(s.getLeftBound(), s.getRightBound());
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
@@ -225,6 +225,38 @@ public class Francify extends PApplet {
 
 		// Draw Labels
 	}
+    public void drawAvgSpeedData(int minBound, int maxBound) {
+        // Set colors and draw lines.
+        int pointSize = 5;
+        for(int i = minBound; i < maxBound; i++){
+            RaceRow rr0 = data.get(i);
+            RaceRow rr1 = data.get(i+1);
+            if ((rr0 != null) && (rr1 != null) && (rr0.avgSpeed > 0) && (rr1.avgSpeed > 0)){
+                float x0 = mapToPlotX(rr0.year, minBound, maxBound);
+                float y0 = mapAvgSpeedToPlotY(rr0.avgSpeed);
+                float x1 = mapToPlotX(rr1.year, minBound, maxBound);
+                float y1 = mapAvgSpeedToPlotY(rr1.avgSpeed);
+              //show data points
+                fill(96, 105, 114);
+                ellipse(x0,y0, pointSize, pointSize);
+                ellipse(x1,y1, pointSize, pointSize);
+
+                //Show line
+                stroke(0xFF002E3E);
+                strokeWeight(1);
+                line(x0,y0,x1,y1);
+            }
+            else{
+//              System.out.println("Null data at key: " + i);
+            }
+        }
+    }
+
+    public float mapAvgSpeedToPlotY(float y){
+        int buffer = (int) ((maxSpeed- minSpeed) * 0.1);
+        float newY = map(y, minSpeed - buffer, maxSpeed + buffer, 450, 50);
+        return newY;
+    }
 
 	public void drawDistanceData(int minBound, int maxBound) {
 		// Set colors and draw lines. Use a thicker stroke if possible
@@ -234,9 +266,9 @@ public class Francify extends PApplet {
 	        RaceRow rr1 = data.get(i+1);
 	        if ((rr0 != null) && (rr1 != null) && (rr0.distance > 0) && (rr1.distance > 0)){
 	            float x0 = mapToPlotX(rr0.year, minBound, maxBound);
-	            float y0 = mapToPlotY(rr0.distance);
+	            float y0 = mapDistanceToPlotY(rr0.distance);
 	            float x1 = mapToPlotX(rr1.year, minBound, maxBound);
-	            float y1 = mapToPlotY(rr1.distance);
+	            float y1 = mapDistanceToPlotY(rr1.distance);
 	          //show data points
                 fill(0xFF33B5E5);
                 ellipse(x0,y0, pointSize, pointSize);
@@ -254,7 +286,7 @@ public class Francify extends PApplet {
 
 	}
 	
-	public float mapToPlotY(float y){
+	public float mapDistanceToPlotY(float y){
 	    int buffer = (int) ((maxDistance - minDistance) * 0.1);
 	    float newY = map(y, minDistance - buffer, maxDistance + buffer, 450, 50);
 	    return newY;
