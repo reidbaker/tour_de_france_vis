@@ -254,7 +254,8 @@ public class Francify extends PApplet {
 	}
 	
 	public float mapToPlotY(float y){
-	    float newY = map(y, minDistance, maxDistance, 450, 50);
+	    int buffer = (int) ((maxDistance - minDistance) * 0.1);
+	    float newY = map(y, minDistance - buffer, maxDistance + buffer, 450, 50);
 	    return newY;
 	}
 	
