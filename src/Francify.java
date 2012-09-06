@@ -17,7 +17,7 @@ public class Francify extends PApplet {
 	public static final boolean DRAW_SPEED= false;
 
 	public ControlP5 cp5;
-    public CheckBox lineGraph;
+    public CheckBox lineGraph, lineGraph2;
     public CheckBox barGraph;
     public boolean enableDistance = true;
 	public boolean enableSpeed = true;
@@ -165,33 +165,44 @@ public class Francify extends PApplet {
         // checkboxes for line graph
         cp5 = new ControlP5(this);
         lineGraph = cp5.addCheckBox("LineGraph")
-                .setPosition(graphW + 100, graphY)
+                .setPosition(graphX + graphW + 10, graphY)
                 .setColorForeground(dataColor0)
-                .setColorBackground(backgroundColor)
+                .setColorBackground(rgba(darkColor, 0x33))
                 .setColorActive(dataColor0)
                 .setColorLabel(darkColor)
                 .setSize(20, 20)
                 .setItemsPerRow(1)
                 .setSpacingColumn(45)
                 .setSpacingRow(20)
-                .addItem("Distance", 1)
-                .addItem("Average Speed", 1);
+                .addItem("Distance", 1);
         lineGraph.toggle("Distance");
-        lineGraph.toggle("Average Speed");
+
+        lineGraph2 = cp5.addCheckBox("LineGraph2")
+	        .setPosition(graphX + graphW + 10, graphY + 25)
+	        .setColorForeground(dataColor1)
+	        .setColorBackground(rgba(darkColor, 0x33))
+	        .setColorActive(dataColor1)
+	        .setColorLabel(darkColor)
+	        .setSize(20, 20)
+	        .setItemsPerRow(1)
+	        .setSpacingColumn(45)
+	        .setSpacingRow(20)
+	        .addItem("Avg. Speed", 1);
+        lineGraph2.toggle("Avg. Speed");
 
         // checkboxes for bargraph
         barGraph= cp5.addCheckBox("BarGraph")
                 .setPosition(graphW + graphX + 10, graphY)
-                .setColorForeground(dataColor1)
-                .setColorBackground(backgroundColor)
-                .setColorActive(dataColor1)
+                .setColorForeground(rgba(dataColor0, 0x88))
+                .setColorBackground(rgba(darkColor, 0x33))
+                .setColorActive(rgba(dataColor0, 0x88))
                 .setColorLabel(darkColor)
                 .setSize(20, 20)
                 .setItemsPerRow(1)
                 .setSpacingColumn(45)
                 .setSpacingRow(20)
-                .addItem("Assending", 1);
-        barGraph.toggle("Assending");
+                .addItem("Ascending", 1);
+        barGraph.toggle("Ascending");
         barGraph.setVisible(false);
 	}
 
@@ -203,9 +214,9 @@ public class Francify extends PApplet {
             }
             else{
                 enableDistance = false;
-            }
-            
-            int speedChecked = (int) lineGraph.getArrayValue()[1];
+			}
+		} else if (theEvent.isFrom(lineGraph2)) {
+			int speedChecked = (int) lineGraph2.getArrayValue()[0];
             if (speedChecked == 1) {
                 enableSpeed= true;
             }
@@ -346,8 +357,10 @@ public class Francify extends PApplet {
                     graphY, graphH);
         float speedY = mapToPlotY(row.avgSpeed, minSpeed, maxSpeed,
                     graphY, graphH);
-        ellipse(year,distY,8,8);
-        ellipse(year,speedY,8,8);
+		if (enableDistance)
+			ellipse(year, distY, 8, 8);
+		if (enableSpeed)
+			ellipse(year, speedY, 8, 8);
 	}
 	
 	public void updateCursor(){
@@ -543,11 +556,13 @@ public class Francify extends PApplet {
 			currentDisplayed = (currentDisplayed + 1) % 2;
 			if (currentDisplayed == PART_ONE) {
 				lineGraph.setVisible(true);
+				lineGraph2.setVisible(true);
 				barGraph.setVisible(false);
 				sCurrent = sOne;
 				sliderLabel = "Years";
 			} else {
 				lineGraph.setVisible(false);
+				lineGraph2.setVisible(false);
 				barGraph.setVisible(true);
 				sCurrent = sTwo;
 				sliderLabel = "Number of Medals";
@@ -609,9 +624,9 @@ public class Francify extends PApplet {
 		pushMatrix();
 		translate(graphX - 5,graphY + graphH - 20);
 		fill(rgba(dataColor0, 0.75f));
-		text(""+maxDistance, 0, 0);
+		text(""+minDistance, 0, 0);
 		fill(rgba(dataColor1, 0.75f));
-		text(""+maxSpeed, 0, 18);
+		text(""+minSpeed, 0, 18);
 		popMatrix();
 		textAlign(CENTER);
 		} else {
