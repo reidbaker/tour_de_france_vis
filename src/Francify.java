@@ -1,5 +1,6 @@
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
 import controlP5.*;
@@ -673,14 +674,16 @@ public class Francify extends PApplet {
 
     public ArrayList<String> filterByMedals(int min, int max){
         Set<String> keys = numMedals.keySet();
-        ArrayList<String> filtered = new ArrayList<String>();
+        ArrayList<String> filteredC = new ArrayList<String>();
+        ArrayList<Integer> filteredM = new ArrayList<Integer>();
         for(String country:keys){
             int num = numMedals.get(country);
             if ((num <= max) && (num >= min)){
-                filtered.add(country);
+                filteredC.add(country);
+                filteredM.add(num);
             }
         }
-        return filtered;
+        return filteredC;
     }
 
     public void drawBarGraph(ArrayList<String> countries){
