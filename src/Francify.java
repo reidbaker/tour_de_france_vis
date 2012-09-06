@@ -1,6 +1,5 @@
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -18,9 +17,11 @@ public class Francify extends PApplet {
 	public static final boolean DRAW_SPEED= false;
 
 	public ControlP5 cp5;
-	public CheckBox checkbox;
-	public boolean enableDistance = true;
+    public CheckBox lineGraph;
+    public CheckBox barGraph;
+    public boolean enableDistance = true;
 	public boolean enableSpeed = true;
+    public boolean sortAscending = true;
 
 	public static void main(String[] args) {
 		PApplet.main(new String[] { "--present", "Francify" });
@@ -161,28 +162,42 @@ public class Francify extends PApplet {
 		sCurrent = sOne;
 		sliderLabel = "Years";
 
-		//checkboxes
-		cp5 = new ControlP5(this);
-		checkbox = cp5.addCheckBox("checkBox")
-		        .setPosition(graphW + 100, graphY)
-		        .setColorForeground(dataColor0)
-		        .setColorBackground(backgroundColor)
-		        .setColorActive(dataColor0)
-		        .setColorLabel(darkColor)
-		        .setSize(20, 20)
-		        .setItemsPerRow(1)
-		        .setSpacingColumn(45)
-		        .setSpacingRow(20)
-		        .addItem("Distance", 1)
-		        .addItem("Average Speed", 1)
-		        ;
-		   checkbox.toggle("Distance");
-		   checkbox.toggle("Average Speed");
+        // checkboxes for line graph
+        cp5 = new ControlP5(this);
+        lineGraph = cp5.addCheckBox("LineGraph")
+                .setPosition(graphW + 100, graphY)
+                .setColorForeground(dataColor0)
+                .setColorBackground(backgroundColor)
+                .setColorActive(dataColor0)
+                .setColorLabel(darkColor)
+                .setSize(20, 20)
+                .setItemsPerRow(1)
+                .setSpacingColumn(45)
+                .setSpacingRow(20)
+                .addItem("Distance", 1)
+                .addItem("Average Speed", 1);
+        lineGraph.toggle("Distance");
+        lineGraph.toggle("Average Speed");
+
+        // checkboxes for bargraph
+        barGraph= cp5.addCheckBox("BarGraph")
+                .setPosition(graphW + graphX, graphY)
+                .setColorForeground(dataColor1)
+                .setColorBackground(backgroundColor)
+                .setColorActive(dataColor1)
+                .setColorLabel(darkColor)
+                .setSize(20, 20)
+                .setItemsPerRow(1)
+                .setSpacingColumn(45)
+                .setSpacingRow(20)
+                .addItem("Assending", 1);
+        barGraph.toggle("Distance");
+        barGraph.setVisible(false);
 	}
 
     public void controlEvent(ControlEvent theEvent) {
-        if (theEvent.isFrom(checkbox)) {
-            int distanceChecked = (int) checkbox.getArrayValue()[0];
+        if (theEvent.isFrom(lineGraph)) {
+            int distanceChecked = (int) lineGraph.getArrayValue()[0];
             if (distanceChecked == 1) {
                 enableDistance = true;
             }
@@ -190,12 +205,21 @@ public class Francify extends PApplet {
                 enableDistance = false;
             }
             
-            int speedChecked = (int) checkbox.getArrayValue()[1];
+            int speedChecked = (int) lineGraph.getArrayValue()[1];
             if (speedChecked == 1) {
                 enableSpeed= true;
             }
             else{
                 enableSpeed = false;
+            }
+        }
+        else { //The event is from BarGraph
+            int ascendingChecked = (int) barGraph.getArrayValue()[0];
+            if (ascendingChecked == 1){
+                sortAscending = true;
+            }
+            else{
+                sortAscending = false;
             }
         }
     }
@@ -513,13 +537,13 @@ public class Francify extends PApplet {
 		if (currentDisplayed != toggleTo) {
 			currentDisplayed = (currentDisplayed + 1) % 2;
 			if (currentDisplayed == PART_ONE) {
-				checkbox.setVisible(true);
+				lineGraph.setVisible(true);
+				barGraph.setVisible(false);
 				sCurrent = sOne;
-//				graphY -= 40;
 				sliderLabel = "Years";
 			} else {
-				checkbox.setVisible(false);
-//				graphY += 40;
+				lineGraph.setVisible(false);
+				barGraph.setVisible(true);
 				sCurrent = sTwo;
 				sliderLabel = "Number of Medals";
 			}
