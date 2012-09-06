@@ -221,15 +221,14 @@ public class Francify extends PApplet {
 			detailsOnDemand(detailRow);
 		}
 		} else {
-			// TODO: Draw Data for Part 2 here
+			//bar graph code
+			ArrayList<String> countries = filterByMedals(sCurrent.values[0],
+					sCurrent.values[sCurrent.values.length - 1]);
+			drawBarGraph(countries);
 		}
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
-
-		//bar graph code
-		ArrayList<String> countries = filterByMedals(10, 37);
-		drawBarGraph(countries);
 	}
 	
 	public void detailsOnDemand(RaceRow row){
@@ -695,14 +694,15 @@ public class Francify extends PApplet {
         for(int i=0; i < numCountries; i++){
             int medalCount = numMedals.get(countries.get(i));
             float xLoc = graphX + i*distanceBetween + i*width + distanceBetween;
-            drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0);
+            drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0, countries.get(i));
         }
     }
 
     public void drawBar(boolean striped, float amount, float xOffset,
-            float yOffset, float width, float graphH, int color) {
+            float yOffset, float width, float graphH, int color, String label) {
 
         float height = mapToPlotY(amount, 0, 40, yOffset, graphH);
+        // Point of the top left corner of the bar to be drawn
         float barY = graphH + (yOffset - height);
 
         if (striped) {
@@ -726,6 +726,17 @@ public class Francify extends PApplet {
         //Draw bargraph
         noStroke();
         rect(xOffset, barY, width, height, 7);
+        
+        //Draw Label
+        textFont(largerFont);
+        textSize(14);
+        textAlign(CENTER);
+        fill(darkColor);
+        pushMatrix();
+        translate(xOffset + width/2 + 6, barY + height/2);
+        rotate(-PI/2);
+        text(label, 0, 0);
+        popMatrix();
     }
 
 	public int rgba(int rgb, int a){
