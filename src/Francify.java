@@ -123,6 +123,7 @@ public class Francify extends PApplet {
 		drawRange();
 		handleInput();
 		drawAvgSpeedData(s.getLeftBound(), s.getRightBound());
+		drawDistanceData(s.getLeftBound(), s.getRightBound());
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
