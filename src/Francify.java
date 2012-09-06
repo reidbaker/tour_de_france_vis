@@ -18,6 +18,8 @@ public class Francify extends PApplet {
 
 	//Skinning Color Variables
 	int darkColor = 0xFF002E3E;
+	int dataColor0 = 0xFF002E3E;
+	int dataColor1 = 0xFF88c23c;
 	
 	Slider s;
 	boolean unpressed;
@@ -130,8 +132,8 @@ public class Francify extends PApplet {
 		s.drawSlider();
 		drawRange();
 		handleInput();
-		drawDistanceData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
-		drawDistanceData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
+		drawData(DRAW_DISTANCE, s.getLeftBound(), s.getRightBound());
+		drawData(DRAW_SPEED, s.getLeftBound(), s.getRightBound());
 		updateAnim();
 		if (!mousePressed)
 			updateCursor();
@@ -250,37 +252,8 @@ public class Francify extends PApplet {
 
 		// Draw Labels
 	}
-    public void drawAvgSpeedData(int minBound, int maxBound) {
-        // Set colors and draw lines.
-        noFill();
-        beginShape();
-        for(int i = minBound; i < maxBound; i++){
-            RaceRow rr0 = data.get(i);
-            RaceRow rr1 = data.get(i+1);
-            if ((rr0 != null) && (rr1 != null) && (rr0.avgSpeed > 0) && (rr1.avgSpeed > 0)){
-                float x0 = mapToPlotX(rr0.year, minBound, maxBound);
-                float y0 = mapAvgSpeedToPlotY(rr0.avgSpeed);
-                //Show line
-                stroke(0x8888c23c);
-                strokeWeight(3);
-                curveVertex(x0, y0);
-            }
-            else{
-                endShape();
-                beginShape();
-//              System.out.println("Null data at key: " + i);
-            }
-        }
-        endShape();
-    }
 
-    public float mapAvgSpeedToPlotY(float y){
-        int buffer = (int) ((maxSpeed- minSpeed) * 0.1);
-        float newY = map(y, minSpeed - buffer, maxSpeed + buffer, 450, 50);
-        return newY;
-    }
-
-	public void drawDistanceData(boolean distanceOrSpeed, int minBound, int maxBound) {
+	public void drawData(boolean distanceOrSpeed, int minBound, int maxBound) {
 		// Set colors and draw lines.
 	    noFill();
 	    beginShape();
@@ -294,11 +267,11 @@ public class Francify extends PApplet {
 	            float year = mapToPlotX(rr0.year, minBound, maxBound);
 	            if (distanceOrSpeed == DRAW_DISTANCE){
 	                y = mapDistanceToPlotY(rr0.distance);	                
-	                stroke(rgba(darkColor, 0x88));
+	                stroke(rgba(dataColor0, 0x88));
 	            }
 	            else { //(distanceOrSpeed == DRAW_SPEED)
 	                y = mapAvgSpeedToPlotY(rr0.avgSpeed);
-	                stroke(0x8888c23c);
+	                stroke(rgba(dataColor1, 0x88));
 	            }
 	            curveVertex(year, y);
 	        }
@@ -320,7 +293,12 @@ public class Francify extends PApplet {
 	    float newX = map(x, minBound, maxBound, 50, 750);
 	    return newX;
 	}
-	
+    public float mapAvgSpeedToPlotY(float y){
+        int buffer = (int) ((maxSpeed- minSpeed) * 0.1);
+        float newY = map(y, minSpeed - buffer, maxSpeed + buffer, 450, 50);
+        return newY;
+    }
+
 	public int rgba(int rgb, int a){
 		return rgb & ((a << 24) | 0xFFFFFF);
 	}
