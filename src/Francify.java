@@ -139,13 +139,6 @@ public class Francify extends PApplet {
 			data.put(rr.year, rr);
 		}
 		
-		int[] vals = new int[maxSYear - minSYear];
-		for(int i = minSYear; i < maxSYear; i++){
-			vals[i-minSYear] = i;
-		}
-		sOne = new Slider(graphX, graphY + graphH + 50, graphW, 50, vals);
-		sOne.setDrawInterval(10);
-		
 		int maxMedals = 0;
 		for(String s : numMedals.keySet()){
 			if(numMedals.get(s) > maxMedals){
@@ -159,6 +152,13 @@ public class Francify extends PApplet {
 		sTwo = new Slider(graphX, graphY + graphH + 50, graphW, 50, medalCounts);
 		sTwo.setDrawInterval(5);
 		
+		int[] vals = new int[maxSYear - minSYear];
+		for(int i = minSYear; i < maxSYear; i++){
+			vals[i-minSYear] = i;
+		}
+		sOne = new Slider(graphX, graphY + graphH + 50, graphW, 50, vals);
+		sOne.setDrawInterval(10);
+				
 		sCurrent = sOne;
 		sliderLabel = "Years";
 
