@@ -21,7 +21,7 @@ public class Francify extends PApplet {
 	int darkColor = 0xFF002E3E;
 	int dataColor0 = 0xFF4499bb;
 	int dataColor1 = 0xFF88c23c;
-	int detailsOnDemandColor = 0xFFE7E7E7;
+	int detailsOnDemandColor = 0xAAE7E7E7;
 	
 	Slider s;
 	boolean unpressed;
@@ -237,14 +237,14 @@ public class Francify extends PApplet {
 		// Hilight the selected data points
 		noFill();
 		stroke(darkColor);
-		strokeWeight(4);
+		strokeWeight(3);
 		float year = mapToPlotX(row.year, s.getLeftBound(), s.getRightBound(), graphX, graphW);     
         float distY = mapToPlotY(row.distance, minDistance, maxDistance,
                     graphY, graphH);
         float speedY = mapToPlotY(row.avgSpeed, minSpeed, maxSpeed,
                     graphY, graphH);
-        ellipse(year,distY,10,10);
-        ellipse(year,speedY,10,10);
+        ellipse(year,distY,8,8);
+        ellipse(year,speedY,8,8);
 	}
 	
 	public void updateCursor(){
