@@ -25,6 +25,7 @@ public class Francify extends PApplet {
 	PFont largerFont;
 	int rangeMin, rangeMax, minSYear, maxSYear;
 	int currentDisplayed;
+	String sliderLabel, title;
 	
 	float minSpeed, maxSpeed, minDistance, maxDistance;
 	
@@ -115,6 +116,8 @@ public class Francify extends PApplet {
 		}
 		s.setValues(vals);
 		s.setDrawInterval(10);
+		sliderLabel = "Years";
+		title = "Tour de France, 1903 - 2009";
 	}
 
 	public void draw() {
@@ -169,6 +172,10 @@ public class Francify extends PApplet {
 			rangeY = 475;
 			text(range, rangeX, rangeY);
 		}
+		int width = (int)(textWidth(sliderLabel) + 0.5);
+		text(sliderLabel, getWidth()/2 - width/2, 590);
+		width = (int)(textWidth(title)+0.5);
+		text(title, getWidth()/2 - width/2, 25);
 	}
 	
 	public void handleInput(){
@@ -282,7 +289,7 @@ public class Francify extends PApplet {
 	            float x0 = mapToPlotX(rr0.year, minBound, maxBound);
 	            float y0 = mapDistanceToPlotY(rr0.distance);
 	          //show data points
-                stroke(darkColor & (0x88 << 24 | 0xFFFFFF));
+                stroke(rgba(darkColor, 0x88));
                 strokeWeight(3);
 	            curveVertex(x0,y0);
 	        }
@@ -304,6 +311,18 @@ public class Francify extends PApplet {
 	public float mapToPlotX(float x, float minBound, float maxBound){
 	    float newX = map(x, minBound, maxBound, 50, 750);
 	    return newX;
+	}
+	
+	public int rgba(int rgb, int a){
+		return rgb & ((a << 24) | 0xFFFFFF);
+	}
+	
+	public int rgba(int rgb, float a){
+		if(a < 0)
+			a = 0;
+		if(a > 255)
+			a = 255;
+		return rgba(rgb, a * 255);
 	}
 
 	private class Slider {
@@ -383,16 +402,14 @@ public class Francify extends PApplet {
 			// Draw main bar
 			fill(0, 0, 0, 0);
 			for (int i = 0; i < h; i++) {
-				// Mask the dark blue color with the alpha mask, to make a
-				// transparent gradient, in the same color scheme.
-				stroke(darkColor & ((i * 127 / h << 24) | 0xffffff));
+				stroke(rgba(darkColor, i * 127 / h));
 				line(left, y + i, right, y + i);
 			}
 			rect(left, y, right - left, h);
 
 			// Draw left handle
 			stroke(0, 0, 0, 0);
-			fill(darkColor & ((127 << 24) | 0xffffff));
+			fill(rgba(darkColor, 127));
 			arc(left, y + 10, 20, 20, PI, 3 * PI / 2);
 			arc(left, y + h - 10, 20, 20, PI / 2, PI);
 			rect(left + 0.5f - 10, y + 10, 10, h - 20);
@@ -404,7 +421,7 @@ public class Francify extends PApplet {
 
 			// Draw right handle
 			stroke(0, 0, 0, 0);
-			fill(darkColor & ((127 << 24) | 0xffffff));
+			fill(rgba(darkColor, 127));
 			arc(right, y + 10, 20, 20, 3 * PI / 2, 2 * PI);
 			arc(right, y + h - 10, 20, 20, 0, PI / 2);
 			rect(right + 0.5f, y + 10, 10, h - 20);
