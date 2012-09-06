@@ -24,6 +24,8 @@ public class Francify extends PApplet {
 
 	//Skinning Color Variables
 	int backgroundColor = 0xFFCCCCCC;
+	int tabBackgroundColor = 0xFF777777;
+	int tabUnselectColor = 0xFF999999;
 	int darkColor = 0xFF002E3E;
 	int dataColor0 = 0xFF4499bb;
 	int dataColor1 = 0xFF88c23c;
@@ -40,7 +42,7 @@ public class Francify extends PApplet {
 	int currentDisplayed;
 	static float detailMaxDistance = 25.0f;
 	float detailsDistance;
-	String sliderLabel, title;
+	String sliderLabel;
 	
 	float minSpeed, maxSpeed, minDistance, maxDistance;
 	
@@ -137,18 +139,17 @@ public class Francify extends PApplet {
 		s = new Slider(graphX, graphY + graphH + 50, graphW, 50, vals);
 		s.setDrawInterval(10);
 		sliderLabel = "Years";
-		title = "Tour de France, 1903 - 2009";
 
 		//checkboxes
 		cp5 = new ControlP5(this);
 		checkbox = cp5.addCheckBox("checkBox")
-		        .setPosition(graphW, graphY/2)
+		        .setPosition(graphW + 100, graphY)
 		        .setColorForeground(dataColor0)
 		        .setColorBackground(backgroundColor)
 		        .setColorActive(dataColor0)
 		        .setColorLabel(darkColor)
 		        .setSize(20, 20)
-		        .setItemsPerRow(2)
+		        .setItemsPerRow(1)
 		        .setSpacingColumn(45)
 		        .setSpacingRow(20)
 		        .addItem("Distance", 1)
@@ -183,8 +184,10 @@ public class Francify extends PApplet {
 
 		background(backgroundColor);
 		drawAxes();
+		drawTabs();
 		s.drawSlider();
 		handleInput();
+		if(currentDisplayed == PART_ONE){
         detailsDistance = Float.MAX_VALUE;
         RaceRow detailRow = null;
         if (enableDistance) {
@@ -199,6 +202,9 @@ public class Francify extends PApplet {
         }
 		if (detailRow != null) {
 			detailsOnDemand(detailRow);
+		}
+		} else {
+			// TODO: Draw Data for Part 2 here
 		}
 		updateAnim();
 		if (!mousePressed)
@@ -309,6 +315,16 @@ public class Francify extends PApplet {
 		case Slider.RIGHTHANDLE:
 			cursor(HAND);
 		}
+		
+		//Handle Tab Stuff
+		if(mouseY < 25){
+			if(currentDisplayed == PART_ONE && mouseX > 11 * width / 20 && mouseX < 19 * width / 20){
+				cursor(HAND);
+			}
+			if(currentDisplayed == PART_TWO && mouseX > width / 20 && mouseX < 9 * width / 20){
+				cursor(HAND);
+			}
+		}
 	}
 	
 	public void drawRange(){
@@ -332,7 +348,6 @@ public class Francify extends PApplet {
 		}
 		textAlign(CENTER);
 		text(sliderLabel, getWidth()/2, 590);
-		text(title, getWidth()/2, 25);
 	}
 	
 	public void handleInput(){
@@ -349,8 +364,18 @@ public class Francify extends PApplet {
 					leftHandle = true;
 				else if (loc == Slider.RIGHTHANDLE)
 					rightHandle = true;
+				
+				//Handle Tab Stuff
+				if(mouseY < 25){
+					if(currentDisplayed == PART_ONE && mouseX > 11 * width / 20 && mouseX < 19 * width / 20){
+						toggleView(PART_TWO);
+					}
+					if(currentDisplayed == PART_TWO && mouseX > width / 20 && mouseX < 9 * width / 20){
+						toggleView(PART_ONE);
+					}
+				}
 			} else {
-				// Everything in this block occurs when the mose has been
+				// Everything in this block occurs when the mouse has been
 				// pressed for some period (clicking and dragging, etc.)
 				if(movingSlider){
 					s.dragAll(mouseX, pmouseX);
@@ -362,6 +387,76 @@ public class Francify extends PApplet {
 				s.snapGoals();
 			}
 		}
+	}
+	
+	public void drawTabs(){
+		fill(tabBackgroundColor);
+		noStroke();
+		rect(0,0,width,25);
+		strokeWeight(2);
+		if (currentDisplayed == PART_ONE) {
+			drawLeftTab(darkColor, backgroundColor, false);
+			drawRightTab(darkColor, tabUnselectColor, true);
+		} else {
+			drawLeftTab(darkColor, tabUnselectColor, true);
+			drawRightTab(darkColor, backgroundColor, false);
+		}
+	}
+	
+	public void drawLeftTab(int strokeColor, int tabColor, boolean back){
+		int radius = 10;
+		noStroke();
+		fill(tabColor);
+		rect(width/20,25-radius,radius,radius);
+		rect(9 * width/20 - radius, 25-radius, radius, radius);
+		rect(width/20+radius,radius,2 * width / 5 - 2 * radius, 25-radius);
+		rect(width/20+ 2 * radius, 0, 2 * width / 5 - 4 * radius, radius);
+		stroke(strokeColor);
+		line(0,25, width/20, 25);
+		line(9 * width / 20, 25, width/2, 25);
+		line(width/20 + radius, radius, width/20 + radius, 25 - radius);
+		line(9 * width / 20 - radius, radius, 9 * width / 20 - radius, 25 - radius);
+		line(width/20 + 2 * radius, 0, 9 * width / 20 - 2 * radius, 0);
+		fill(tabBackgroundColor);
+		arc(width/20, 25-radius, radius*2, radius*2, 0, PI/2);
+		arc(9*width/20, 25-radius,radius*2, radius*2, PI/2, PI);
+		fill(tabColor);
+		arc(width/20 + radius*2, radius, radius*2, radius*2, PI, 3*PI/2);
+		arc(9*width/20 - radius*2, radius, radius*2, radius*2, 3*PI/2, 2*PI);
+		if(back)
+			line(0,25,width/2,25);
+		textFont(largerFont);
+		textAlign(CENTER);
+		fill(darkColor);
+		text("Distance and Avg. Speed", width/4, 20);
+	}
+	
+	public void drawRightTab(int strokeColor, int tabColor, boolean back){
+		int radius = 10;
+		noStroke();
+		fill(tabColor);
+		rect(11 * width/20,25-radius,radius,radius);
+		rect(19 * width/20 - radius, 25-radius, radius, radius);
+		rect(11 * width/20+radius,radius,2 * width / 5 - 2 * radius, 25-radius);
+		rect(11 * width/20+ 2 * radius, 0, 2 * width / 5 - 4 * radius, radius);
+		stroke(strokeColor);
+		line(width/2,25, 11 * width/20, 25);
+		line(19 * width / 20, 25, width, 25);
+		line(11 * width/20 + radius, radius, 11 * width/20 + radius, 25 - radius);
+		line(19 * width / 20 - radius, radius, 19 * width / 20 - radius, 25 - radius);
+		line(11 * width/20 + 2 * radius, 0, 19 * width / 20 - 2 * radius, 0);
+		fill(tabBackgroundColor);
+		arc(11 * width/20, 25-radius, radius*2, radius*2, 0, PI/2);
+		arc(19*width/20, 25-radius,radius*2, radius*2, PI/2, PI);
+		fill(tabColor);
+		arc(11 *width/20 + radius*2, radius, radius*2, radius*2, PI, 3*PI/2);
+		arc(19*width/20 - radius*2, radius, radius*2, radius*2, 3*PI/2, 2*PI);
+		if(back)
+			line(width/2,25,width,25);
+		textFont(largerFont);
+		textAlign(CENTER);
+		fill(darkColor);
+		text("Medal Counts", 3*width/4, 20);
 	}
 	
 	public void updateAnim(){
@@ -378,22 +473,16 @@ public class Francify extends PApplet {
 		s.updateGoals();
 	}
 	
-	public void toggleView(){
-		// FIXME: Finish this method
-		if(currentDisplayed == PART_ONE){
-			s = new Slider(50,700,500,150, null);
-			Set<Integer> keys = data.keySet();
-			int min = Integer.MAX_VALUE, max = 0;
-			for(int i : keys){
-				if(i < min)
-					min = i;
-				if(i > max)
-					max = i;
+	public void toggleView(int toggleTo){
+		if (currentDisplayed != toggleTo) {
+			// FIXME: Recreate the slider bar when toggling
+			currentDisplayed = (currentDisplayed + 1) % 2;
+			if (currentDisplayed == PART_ONE) {
+				checkbox.setVisible(true);
+			} else {
+				checkbox.setVisible(false);
 			}
-		} else {
-			s = new Slider(50,700,500,150, null);
 		}
-		currentDisplayed = (currentDisplayed + 1) % 2;
 	}
 
 	public void drawAxes() {
@@ -410,6 +499,7 @@ public class Francify extends PApplet {
 		endShape();
 		
 		// Draw Labels
+		if(currentDisplayed == PART_ONE){
 		drawRange();
 		
 		textFont(largerFont);
@@ -442,6 +532,9 @@ public class Francify extends PApplet {
 		text(""+maxSpeed, 0, 18);
 		popMatrix();
 		textAlign(CENTER);
+		} else {
+			// TODO: Draw Axes Labels for Part 2
+		}
 	}
 
     public RaceRow drawData(boolean distanceOrSpeed, int minBound, int maxBound,
@@ -588,8 +681,13 @@ public class Francify extends PApplet {
 			vertex(x+w, y+h);
 			endShape();
 
-			drawData(DRAW_DISTANCE, values[0], values[values.length -1], 1, x, y, w, h);
-			drawData(DRAW_SPEED, values[0], values[values.length -1], 1, x, y, w, h);
+			if(currentDisplayed == PART_ONE){
+				drawData(DRAW_DISTANCE, values[0], values[values.length - 1],
+						1, x, y, w, h);
+				drawData(DRAW_SPEED, values[0], values[values.length -1], 1, x, y, w, h);
+			} else{
+				// TODO: Add mini-graph display for Part Two
+			}
 			
 			// Draw underlying data
 			fill(0,0,0);
