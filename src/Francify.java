@@ -14,6 +14,9 @@ public class Francify extends PApplet {
 		PApplet.main(new String[] { "--present", "Francify" });
 	}
 
+	//Skinning Color Variables
+	int darkColor = 0xFF002E3E;
+	
 	Slider s;
 	boolean unpressed;
 	boolean movingSlider, leftHandle, rightHandle;
@@ -144,16 +147,27 @@ public class Francify extends PApplet {
 	}
 	
 	public void drawRange(){
-		String ranges = rangeMin + " - " + rangeMax;
-		if(rangeMin == rangeMax){
-			ranges = ""+rangeMin;
-		}
-		int rangeWidth = (int)(textWidth(ranges) + 0.5);
-		int rangeX = getWidth()/2 - rangeWidth/2;
-		int rangeY = getHeight()-25 + 12;
-		fill(0,0,0);
+		fill(darkColor);
 		textFont(largerFont);
-		text(ranges, rangeX, rangeY);
+		if(rangeMin == rangeMax){
+			String range = ""+rangeMin;
+			int rangeWidth = (int)(textWidth(range) + 0.5);
+			int rangeX = getWidth()/2 - rangeWidth/2;
+			int rangeY = 475;
+			text(range, rangeX, rangeY);
+		} else {
+			String range = ""+rangeMin;
+			int rangeWidth = (int)(textWidth(range) + 0.5);
+			int rangeX = 50;
+			int rangeY = 475;
+			text(range, rangeX, rangeY);
+			
+			range = ""+rangeMax;
+			rangeWidth = (int)(textWidth(range) + 0.5);
+			rangeX = 750 - rangeWidth;
+			rangeY = 475;
+			text(range, rangeX, rangeY);
+		}
 	}
 	
 	public void handleInput(){
@@ -219,7 +233,7 @@ public class Francify extends PApplet {
 
 	public void drawAxes() {
 		// Draw Axes Lines
-		stroke(0);
+		stroke(darkColor);
 		strokeWeight(3);
 		line(50,50,50,450);
 		line(50,450,750,450);
@@ -244,7 +258,7 @@ public class Francify extends PApplet {
                 ellipse(x1,y1, pointSize, pointSize);
 
 	            //Show line
-                stroke(0xFF002E3E);
+                stroke(darkColor);
                 strokeWeight(1);
 	            line(x0,y0,x1,y1);
 	        }
@@ -343,32 +357,33 @@ public class Francify extends PApplet {
 			// Draw main bar
 			fill(0, 0, 0, 0);
 			for (int i = 0; i < h; i++) {
-//				002E3E
-				stroke(0x00, 0x2e, 0x3E, i * 127 / h);
+				// Mask the dark blue color with the alpha mask, to make a
+				// transparent gradient, in the same color scheme.
+				stroke(darkColor & ((i * 127 / h << 24) | 0xffffff));
 				line(left, y + i, right, y + i);
 			}
 			rect(left, y, right - left, h);
 
 			// Draw left handle
 			stroke(0, 0, 0, 0);
-			fill(0x00, 0x2e, 0x3E, 127);
+			fill(darkColor & ((127 << 24) | 0xffffff));
 			arc(left, y + 10, 20, 20, PI, 3 * PI / 2);
 			arc(left, y + h - 10, 20, 20, PI / 2, PI);
 			rect(left + 0.5f - 10, y + 10, 10, h - 20);
 
-			fill(0x00, 0x2e, 0x3E);
+			fill(darkColor);
 			ellipse(left - 5, y + (h / 2) - 5, 4, 4);
 			ellipse(left - 5, y + (h / 2), 4, 4);
 			ellipse(left - 5, y + (h / 2) + 5, 4, 4);
 
 			// Draw right handle
 			stroke(0, 0, 0, 0);
-			fill(0x00, 0x2e, 0x3E, 127);
+			fill(darkColor & ((127 << 24) | 0xffffff));
 			arc(right, y + 10, 20, 20, 3 * PI / 2, 2 * PI);
 			arc(right, y + h - 10, 20, 20, 0, PI / 2);
 			rect(right + 0.5f, y + 10, 10, h - 20);
 
-			fill(0x00, 0x2e, 0x3E);
+			fill(darkColor);
 			ellipse(right + 5, y + (h / 2) - 5, 4, 4);
 			ellipse(right + 5, y + (h / 2), 4, 4);
 			ellipse(right + 5, y + (h / 2) + 5, 4, 4);
@@ -464,7 +479,7 @@ public class Francify extends PApplet {
 				}
 			}
 			if(abs(snappedRight-right) > 0){
-				right += (snappedRight - right) / 4;
+				right += (snappedRight - right) / slowness;
 				if(abs(snappedRight - right) == 1){
 					right = snappedRight;
 				}
