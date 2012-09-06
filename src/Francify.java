@@ -146,7 +146,7 @@ public class Francify extends PApplet {
 		        .setColorForeground(dataColor0)
 		        .setColorBackground(backgroundColor)
 		        .setColorActive(dataColor0)
-		        .setColorLabel(color(255))
+		        .setColorLabel(darkColor)
 		        .setSize(20, 20)
 		        .setItemsPerRow(2)
 		        .setSpacingColumn(45)
