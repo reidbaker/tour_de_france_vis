@@ -191,7 +191,7 @@ public class Francify extends PApplet {
                 .setSpacingColumn(45)
                 .setSpacingRow(20)
                 .addItem("Assending", 1);
-        barGraph.toggle("Distance");
+        barGraph.toggle("Assending");
         barGraph.setVisible(false);
 	}
 
