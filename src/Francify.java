@@ -405,8 +405,13 @@ public class Francify extends PApplet {
 			text(sCurrent.values[sCurrent.values.length-1], graphX - 5,graphY + 18);
 
 			textAlign(CENTER);
+			if( sCurrent.getLeftBound() != sCurrent.getRightBound()){
 			text(sliderLabel + " : " + sCurrent.getLeftBound() + " - "
 					+ sCurrent.getRightBound(), getWidth() / 2, 590);
+			} else {
+				text(sliderLabel + " : " + sCurrent.getLeftBound(),
+						getWidth() / 2, 590);
+			}
 		}
 	}
 	
@@ -871,7 +876,13 @@ public class Francify extends PApplet {
 				drawData(DRAW_SPEED, values[0], values[values.length -1], 1, x, y, w, h);
 			} else{
 				// TODO: Add mini-graph display for Part Two
-				filterByMedals(values[0], values[values.length-1]);
+				ArrayList<String> countries = filterByMedals(values[0], values[values.length-1]);
+				strokeWeight(1);
+				fill(dataColor0);
+				for(int i = 0; i < countries.size(); i++){
+					float barLen = map(numMedals.get(countries.get(i)), values[0], values[values.length-1], 0, w - w/(values.length));
+					rect(x + w / (2 * values.length), y + h - (i+1) * h/countries.size(), barLen, h/countries.size());
+				}
 			}
 			
 			// Draw underlying data
