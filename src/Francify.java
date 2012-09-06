@@ -264,35 +264,41 @@ public class Francify extends PApplet {
 		// Draw Labels
 	}
 
-	public void drawData(boolean distanceOrSpeed, int minBound, int maxBound) {
-		// Set colors and draw lines.
-	    noFill();
-	    beginShape();
+    public void drawData(boolean distanceOrSpeed, int minBound, int maxBound,
+            int strokeWidth, float x0, float y0, float width, float height) {
+        // Set colors and draw lines.
+        noFill();
+        beginShape();
         strokeWeight(3);
 
         //Get and draw data
         float y;
-	    for(int i = minBound; i < maxBound; i++){
-	        RaceRow rr0 = data.get(i);
-	        if ((rr0 != null) && (rr0.distance > 0)){
-	            float year = mapToPlotX(rr0.year, minBound, maxBound);
-	            if (distanceOrSpeed == DRAW_DISTANCE){
-	                y = mapToPlotY(rr0.distance, minDistance, maxDistance);	                
-	                stroke(rgba(dataColor0, 0x88));
-	            }
-	            else { //(distanceOrSpeed == DRAW_SPEED)
-	                y = mapToPlotY(rr0.avgSpeed, minSpeed, maxSpeed);
-	                stroke(rgba(dataColor1, 0x88));
-	            }
-	            curveVertex(year, y);
-	        }
-	        else{
-	            endShape();
-	            beginShape();
-	        }
-	    }
+        for(int i = minBound; i < maxBound; i++){
+            RaceRow rr = data.get(i);
+            if ((rr != null) && (rr.distance > 0)){
+                float year = mapToPlotX(rr.year, minBound, maxBound);
+                if (distanceOrSpeed == DRAW_DISTANCE){
+                    y = mapToPlotY(rr.distance, minDistance, maxDistance);                 
+                    stroke(rgba(dataColor0, 0x88));
+                }
+                else { //(distanceOrSpeed == DRAW_SPEED)
+                    y = mapToPlotY(rr.avgSpeed, minSpeed, maxSpeed);
+                    stroke(rgba(dataColor1, 0x88));
+                }
+                curveVertex(year, y);
+            }
+            else{
+                endShape();
+                beginShape();
+            }
+        }
         endShape();
-	}
+    }
+
+    public void drawData(boolean distanceOrSpeed, int minBound, int maxBound) {
+        drawData(distanceOrSpeed, minBound, maxBound, 3, graphX, graphY,
+                graphW, graphH);
+    }
 	
     public float mapToPlotY(float y, float min, float max) {
         //Maps actual values to locations we want to draw
