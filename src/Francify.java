@@ -145,8 +145,9 @@ public class Francify extends PApplet {
 	
 	public void drawRange(){
 		String ranges = rangeMin + " - " + rangeMax;
-		if(rangeMin == rangeMax)
+		if(rangeMin == rangeMax){
 			ranges = ""+rangeMin;
+		}
 		int rangeWidth = (int)(textWidth(ranges) + 0.5);
 		int rangeX = getWidth()/2 - rangeWidth/2;
 		int rangeY = getHeight()-25 + 12;
@@ -300,10 +301,6 @@ public class Francify extends PApplet {
 		}
 
 		public void drawSlider() {
-			//Fill background
-//			fill(255,255,255);
-//			noStroke();
-//			rect(x,y,w,h);
 			stroke(127,127,127);
 			strokeWeight(2);
 			noFill();
@@ -325,7 +322,7 @@ public class Francify extends PApplet {
 			for (int i = 0; i < values.length; i++) {
 				int xpos = x + (i) * w / (values.length) + w
 						/ (2 * values.length);
-				if (values[i] % drawInterval == 0) {
+				if (values[i] % drawInterval == 0 || i == 0 || i == values.length-1) {
 					text(values[i], xpos
 							- (int) (textWidth("" + values[i]) + 0.5) / 2, y
 							+ h + fontSize);
