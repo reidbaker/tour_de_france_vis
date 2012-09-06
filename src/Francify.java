@@ -243,7 +243,8 @@ public class Francify extends PApplet {
                 ellipse(x1,y1, pointSize, pointSize);
 
 	            //Show line
-	            stroke(3);
+                stroke(0xFF002E3E);
+                strokeWeight(1);
 	            line(x0,y0,x1,y1);
 	        }
 	        else{
