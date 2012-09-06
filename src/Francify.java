@@ -181,7 +181,7 @@ public class Francify extends PApplet {
 
         // checkboxes for bargraph
         barGraph= cp5.addCheckBox("BarGraph")
-                .setPosition(graphW + graphX, graphY)
+                .setPosition(graphW + graphX + 10, graphY)
                 .setColorForeground(dataColor1)
                 .setColorBackground(backgroundColor)
                 .setColorActive(dataColor1)
@@ -190,7 +190,7 @@ public class Francify extends PApplet {
                 .setItemsPerRow(1)
                 .setSpacingColumn(45)
                 .setSpacingRow(20)
-                .addItem("Assending", 1);
+                .addItem("Ascending", 1);
         barGraph.toggle("Distance");
         barGraph.setVisible(false);
 	}
@@ -748,10 +748,9 @@ public class Francify extends PApplet {
     public void drawBar(boolean striped, float amount, float xOffset,
             float yOffset, float width, float graphH, int color, String label) {
 
-        float barY = mapToPlotY(amount, 0, 37, yOffset, yOffset+graphH);
-        float height = 10;
+    	float barY = map(amount, 37, 0, graphY, graphY+graphH);
+        float height = graphY + graphH - barY;
         // Point of the top left corner of the bar to be drawn
-//        float barY = graphH + (yOffset - height);
 
         if (striped) {
             // pattern in bar graph
@@ -778,10 +777,15 @@ public class Francify extends PApplet {
         //Draw Label
         textFont(largerFont);
         textSize(14);
-        textAlign(CENTER);
         fill(darkColor);
         pushMatrix();
-        translate(xOffset + width/2 + 6, barY + height/2);
+        if(height < 50){
+            textAlign(LEFT);
+            translate(xOffset + width/2 + 6, barY - 5);
+        } else {
+            textAlign(CENTER);
+            translate(xOffset + width/2 + 6, barY + height/2);
+        }
         rotate(-PI/2);
         text(label, 0, 0);
         popMatrix();
@@ -850,6 +854,7 @@ public class Francify extends PApplet {
 				drawData(DRAW_SPEED, values[0], values[values.length -1], 1, x, y, w, h);
 			} else{
 				// TODO: Add mini-graph display for Part Two
+				filterByMedals(values[0], values[values.length-1]);
 			}
 			
 			// Draw underlying data
