@@ -18,7 +18,7 @@ public class Francify extends PApplet {
 
 	public ControlP5 cp5;
     public CheckBox lineGraph, lineGraph2;
-    public CheckBox barGraph;
+    public RadioButton barGraph;
     public boolean enableDistance = true;
 	public boolean enableSpeed = true;
     public boolean sortAscending = true;
@@ -191,18 +191,20 @@ public class Francify extends PApplet {
         lineGraph2.toggle("Avg. Speed");
 
         // checkboxes for bargraph
-        barGraph= cp5.addCheckBox("BarGraph")
+        barGraph= cp5.addRadioButton("BarGraph")
                 .setPosition(graphW + graphX + 10, graphY)
                 .setColorForeground(rgba(dataColor0, 0x88))
                 .setColorBackground(rgba(darkColor, 0x33))
                 .setColorActive(rgba(dataColor0, 0x88))
                 .setColorLabel(darkColor)
+                .setNoneSelectedAllowed(false)
                 .setSize(20, 20)
                 .setItemsPerRow(1)
                 .setSpacingColumn(45)
                 .setSpacingRow(20)
-                .addItem("Ascending", 1);
-        barGraph.toggle("Ascending");
+                .addItem("Ascending", 1)
+                .addItem("Descending", 0)
+                .activate(0);
         barGraph.setVisible(false);
 	}
 
@@ -225,8 +227,7 @@ public class Francify extends PApplet {
             }
         }
         else { //The event is from BarGraph
-            int ascendingChecked = (int) barGraph.getArrayValue()[0];
-            if (ascendingChecked == 1){
+            if ((int)(theEvent.getGroup().getArrayValue()[0] + 0.5f) == 1){
                 sortAscending = true;
             }
             else{
@@ -263,7 +264,10 @@ public class Francify extends PApplet {
 			//bar graph code
 			ArrayList<String> countries = filterByMedals(sCurrent.getLeftBound(),
 					sCurrent.getRightBound());
-			drawBarGraph(countries);
+			String hilighted = drawBarGraph(countries);
+			if(hilighted != null){
+				barDetailsOnDemand(hilighted);
+			}
 		}
 		updateAnim();
 		if (!mousePressed)
@@ -286,6 +290,53 @@ public class Francify extends PApplet {
 		}
 	}
 	
+	public void barDetailsOnDemand(String countryToDraw){
+		if(!sortAscending){ // Mouse on left half of graph
+			barDetailsOnDemand(countryToDraw, graphX + graphW/2 + 10, graphY + 10, graphW/2-20, graphH/2, 20);
+		} else {
+			barDetailsOnDemand(countryToDraw, graphX + 10, graphY + 10, graphW/2-20, graphH/2, 20);
+		}
+	}
+	
+	public void barDetailsOnDemand(String countryToDraw, int x, int y, int w, int h, int r){
+		ArrayList<Integer> years = getWinningYears(countryToDraw);
+		int textSize = 18;
+		fill(detailsOnDemandColor);
+		stroke(darkColor);
+		rect(x,y,w,h,r);
+
+		fill(darkColor);
+		textFont(largerFont);
+		textSize(textSize);
+		textAlign(LEFT);
+		int ty = y + r/2 + textSize;
+		int tx = x + r;
+		text(countryToDraw, tx, ty);
+		ty += textSize;
+		text("Winning years:", tx, ty);
+		tx += textSize;
+		text("", ty, tx);
+		for(int i = 0; i < years.size(); i++){
+			if(i % 6 == 0){
+				ty += textSize;
+				text(years.get(i) + (i != years.size()-1 ? ", " : ""), tx, ty);
+			} else {
+				text(years.get(i) + (i != years.size()-1 ? ", " : ""));
+			}
+		}
+	}
+	
+	public ArrayList<Integer> getWinningYears(String country){
+		ArrayList<Integer> years = new ArrayList<Integer>();
+		for(int i : data.keySet()){
+			RaceRow rr = data.get(i);
+			if(rr.firstPlaceCountry.equals(country)){
+				years.add(i);
+			}
+		}
+		return years;
+	}
+	
 	public void detailsOnDemand(RaceRow row){
 		if(mouseX < graphX + graphW/2){ // Mouse on left half of graph
 			detailsOnDemand(row, graphX + graphW/2 + 10, graphY + 10, graphW/2-20, graphH-20, 20);
@@ -297,10 +348,6 @@ public class Francify extends PApplet {
 	public void detailsOnDemand(RaceRow row, int x, int y, int w, int h, int r){
 		int textSize = 18;
 		fill(detailsOnDemandColor);
-
-		fill(detailsOnDemandColor);
-		noStroke();
-		
 		stroke(darkColor);
 		rect(x,y,w,h,r);
 		
@@ -679,6 +726,10 @@ public class Francify extends PApplet {
                     curveVertex(year, y);
                 }
 
+                if(minBound == maxBound){
+                	line(graphX, y, graphX+graphW, y);
+                }
+                
                 if(i == minBound || i == maxBound){
                     curveVertex(year, y);
                 }
@@ -761,8 +812,9 @@ public class Francify extends PApplet {
 		}
     }
 
-    public void drawBarGraph(ArrayList<String> countries){
+    public String drawBarGraph(ArrayList<String> countries){
         ArrayList<String> curCountries = null;
+        String details = null;
         float distanceBetween = 10;
         int numCountries = countries.size();
         //evenly divide bars across graph
@@ -780,20 +832,22 @@ public class Francify extends PApplet {
                 }
             }
             for(int i=0; i < numCountries; i++){
-                doBarWork(curCountries, distanceBetween, width, i);
+                if(doBarWork(curCountries, distanceBetween, width, i)){
+                	details = curCountries.get(i);
+                }
             }
-
         }
+        return details;
     }
 
-    private void doBarWork(ArrayList<String> countries, float distanceBetween,
+    private boolean doBarWork(ArrayList<String> countries, float distanceBetween,
             float width, int i) {
         int medalCount = numMedals.get(countries.get(i));
         float xLoc = graphX + i*distanceBetween + i*width + distanceBetween;
-        drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0, countries.get(i));
+        return drawBar(false, medalCount, xLoc, graphY, width, graphH, dataColor0, countries.get(i));
     }
 
-    public void drawBar(boolean striped, float amount, float xOffset,
+    public boolean drawBar(boolean striped, float amount, float xOffset,
             float yOffset, float width, float graphH, int color, String label) {
 
     	float barY = map(amount, 37, 0, graphY, graphY+graphH);
@@ -837,6 +891,8 @@ public class Francify extends PApplet {
         rotate(-PI/2);
         text(label, 0, 0);
         popMatrix();
+        
+        return (mouseX > xOffset && mouseX < xOffset+width && mouseY > barY && mouseY < barY + height);
     }
 
 	public int rgba(int rgb, int a){
@@ -913,7 +969,6 @@ public class Francify extends PApplet {
 						1, x, y, w, h);
 				drawData(DRAW_SPEED, values[0], values[values.length -1], 1, x, y, w, h);
 			} else{
-				// TODO: Add mini-graph display for Part Two
 				ArrayList<String> countries = filterByMedals(values[0], values[values.length-1]);
 				strokeWeight(1);
 				fill(dataColor0);
@@ -1042,6 +1097,7 @@ public class Francify extends PApplet {
 			if(index == values.length)
 				snappedRight = x+w;
 			snappedRight = x + w * index / values.length;
+			if(index != 0)
 			rangeMax = values[index - 1];
 		}
 		
