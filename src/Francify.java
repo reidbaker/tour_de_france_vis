@@ -848,7 +848,7 @@ public class Francify extends PApplet {
     }
 
     public boolean drawBar(boolean striped, float amount, float xOffset,
-            float yOffset, float width, float graphH, int color, String label) {
+            float yOffset, float width, float graphH, int drawColor, String label) {
 
     	float barY = map(amount, 37, 0, graphY, graphY+graphH);
         float height = graphY + graphH - barY;
@@ -858,7 +858,7 @@ public class Francify extends PApplet {
             // pattern in bar graph
             int lineWeight = 3;
             strokeWeight(lineWeight);
-            stroke(rgba(color, 0x55));
+            stroke(rgba(drawColor, 0x55));
             int patternHeight = 10;
             float lineWidth = width - lineWeight * 2;
             float startPatternY = yOffset + graphH - patternHeight - lineWeight + 1;
@@ -867,10 +867,10 @@ public class Francify extends PApplet {
             for (float i = startPatternY; i > barY; i -= patternHeight) {
                 line(lineX, i, lineX + lineWidth, i + patternHeight);
             }
-            fill(rgba(color, 0x44));
+            fill(rgba(drawColor, 0x44));
         }
         else {
-            fill(rgba(color, 0x88));
+            fill(rgba(drawColor, 0x88));
         }
         //Draw bargraph
         noStroke();
@@ -1133,6 +1133,30 @@ public class Francify extends PApplet {
 					right = snappedRight;
 				}
 			}
+		}
+	}
+	
+	private class RaceRow implements Comparable<RaceRow>{
+		
+		public int year, firstCountryID, secondCountryID, thirdCountryID,
+				numStages;
+		public String firstPlaceRider, firstPlaceCountry, firstPlaceTeam,
+				secondPlaceRider, secondPlaceCountry, secondPlaceTeam,
+				thirdPlaceRider, thirdPlaceCountry, thirdPlaceTeam, bestTeam;
+		public float c2nd, c3rd, avgSpeed, distance;
+		
+		public RaceRow(){
+			year = firstCountryID = secondCountryID = thirdCountryID =
+			numStages = 0;
+			firstPlaceRider = firstPlaceCountry = firstPlaceTeam =
+			secondPlaceRider = secondPlaceCountry = secondPlaceTeam =
+			thirdPlaceRider = thirdPlaceCountry = thirdPlaceTeam = bestTeam = null;
+			c2nd = c3rd = avgSpeed = distance = 0.0f;
+		}
+
+		@Override
+		public int compareTo(RaceRow o) {
+			return year - o.year;
 		}
 	}
 }
